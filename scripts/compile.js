@@ -13,7 +13,7 @@ function compile(file) {
   // console.log(result);
 
   // Create all ancestor directories for this file
-  const outputPath = file.replace(/^src\//, "dist/").replace(".svelte", ".js");
+  const outputPath = file.replace(/^src\//, "dist/").replace(/.svelte$/, ".js");
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, compiled.js.code);
 }
