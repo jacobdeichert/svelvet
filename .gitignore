@@ -1,0 +1,21 @@
+#######################################
+# app
+#######################################
+dist/
+
+#######################################
+# node
+#######################################
+package-lock.json
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Dependency directory
+node_modules

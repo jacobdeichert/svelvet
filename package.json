@@ -1,0 +1,19 @@
+{
+  "name": "sveltepack",
+  "description": "A cli svelte compiler that works with snowpack",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "serve --listen 8080 --single dist",
+    "build": "npm run clean && node scripts/compile.js && npm run snowpack && node scripts/transform.js",
+    "build:prod": "npm run clean && node scripts/compile.js && npm run snowpack -- --optimize && node scripts/ransform.js",
+    "snowpack": "snowpack --include 'dist/**/*' --dest dist/web_modules",
+    "clean": "rm -rf dist && mkdir dist && cp -R public/* dist"
+  },
+  "devDependencies": {
+    "prettier": "^1.16.1",
+    "serve": "^11.1.0",
+    "snowpack": "^1.0.5",
+    "svelte": "^3.7.1"
+  }
+}
