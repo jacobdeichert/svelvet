@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "serve --listen 8080 --single dist",
     "build": "npm run clean && node scripts/compile.js && npm run snowpack && node scripts/transform.js",
-    "build:prod": "npm run clean && node scripts/compile.js && npm run snowpack -- --optimize && node scripts/ransform.js",
+    "build:prod": "npm run clean && node scripts/compile.js && npm run snowpack -- --optimize && node scripts/transform.js",
     "snowpack": "snowpack --include 'dist/**/*' --dest dist/web_modules",
     "clean": "rm -rf dist && mkdir dist && cp -R public/* dist"
   },
