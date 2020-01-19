@@ -8,15 +8,17 @@ A cli `svelte` compiler & watcher that works with [snowpack][snowpack].
 
 
 
+
 ## Goals
 
 * No bundler required
 * _Literally_ no config required
 * Integrate directly with snowpack for an optimal experience
-* Instant dev watch cycle
+* Instant dev watch & rebuild cycle
 * Near-instant optimized production builds
-* Only support standard esm imports (no css/image/custom-loader-like imports)
 * Keep your `node_modules` super light
+* Only support standard esm imports (no css/image/custom-loader-like imports)
+
 
 
 
@@ -73,8 +75,6 @@ You also must have an [`index.html`][basic_example_html] file that loads your en
 
 
 
-
-
 ## Possible future features
 
 * Simple `dist` serving in dev mode
@@ -82,17 +82,33 @@ You also must have an [`index.html`][basic_example_html] file that loads your en
 
 
 
+
 ## Current issues
 
-**Imports don't automatically resolve `index.ext`**
+### Imports don't automatically resolve `index.ext`
 
 If you have a structure like `src/components/Footer/index.svelte`, you cannot rely on `index.svelte` being auto resolved. Standard ESM doesn't auto resolve `index.js` files and at the moment we don't transform the imports for you. So when you import this component, you must use a full path to the index.
 
-Before (very common): `import Footer from './components/Footer';`
+**Before (very common)**: `import Footer from './components/Footer';`
 
-After: `import Footer from './components/Footer/index';`
+**After**: `import Footer from './components/Footer/index';`
 
 Notably, you should leave off the extension. This **is** automatically added during the transform phase.
+
+
+
+
+## FAQ
+
+### Can I override the babel config?
+
+Yes! Just create a `babel.config.js` file in the root of your project, and that _should_ be properly picked up by `svelvet` and `snowpack`. If not, please file an issue.
+
+
+
+
+
+
 
 
 
