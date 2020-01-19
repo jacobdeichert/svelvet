@@ -44,8 +44,27 @@ Add a few simple scripts as seen [here][basic_example_package]:
 },
 ~~~
 
+And finally, add some `svelte` files! All source files must be stored inside the `src` directory so `svelvet` can compile them into the `dist` directory.
 
+You also must have an [`index.html`][basic_example_html] file that loads your entrypoint or root `svelte` component.
 
+~~~html
+<!-- Example: dist/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+    <body>
+        <div id="app"></div>
+
+        <script type="module">
+            import App from './App.js';
+
+            new App({
+                target: document.querySelector('#app'),
+            });
+        </script>
+    </body>
+</html>
+~~~
 
 
 
@@ -70,3 +89,4 @@ Add a few simple scripts as seen [here][basic_example_package]:
 [snowpack]: https://github.com/pikapkg/snowpack
 [basic_example]: https://github.com/jakedeichert/svelvet/tree/master/examples/basic
 [basic_example_package]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/package.json
+[basic_example_html]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/public/index.html
