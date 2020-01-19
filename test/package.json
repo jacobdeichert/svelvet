@@ -8,7 +8,7 @@
     "clean": "rm -rf dist && mkdir dist && cp -R public/* dist"
   },
   "dependencies": {
-    "sveltepack": "file:../",
+    "sveltepack": "file:..",
     "svelte": "^3.7.1"
   },
   "devDependencies": {
