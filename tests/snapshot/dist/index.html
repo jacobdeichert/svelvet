@@ -7,13 +7,13 @@
 
     <body>
         <div id="app"></div>
+
+        <script type="module">
+            import App from './App.js';
+
+            new App({
+                target: document.querySelector('#app'),
+            });
+        </script>
     </body>
-
-    <script type="module">
-        import App from './App.js';
-
-        new App({
-            target: document.querySelector('#app'),
-        });
-    </script>
 </html>
