@@ -2,7 +2,6 @@
   "name": "svelvet",
   "description": "A cli svelte compiler that works with snowpack",
   "version": "0.1.0",
-  "private": true,
   "author": "Jake Deichert",
   "repository": "github:jakedeichert/svelvet",
   "license": "MIT",
