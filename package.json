@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "test": "cd test && npm install && npm run build:prod",
-    "format": "prettier **/*.{js,jsx,ts,tsx,css,html,json,yml} --write --ignore-path .gitignore",
+    "format": "prettier '**/*.{js,jsx,ts,tsx,css,html,json,yml}' --write",
     "lint": "eslint . --ignore-pattern dist"
   },
   "dependencies": {
