@@ -7,7 +7,9 @@
     "dev": "serve --listen 8080 --single dist",
     "build": "npm run clean && node scripts/compile.js",
     "build:prod": "NODE_ENV=production npm run build",
-    "clean": "rm -rf dist && mkdir dist && cp -R public/* dist"
+    "clean": "rm -rf dist && mkdir dist && cp -R public/* dist",
+    "format": "prettier {scripts,src,test}/**/*.{js,jsx,ts,tsx,css,html,json,yml} --write",
+    "lint": "eslint . --ignore-pattern dist"
   },
   "dependencies": {
     "chokidar": "^3.3.1",
@@ -15,6 +17,7 @@
     "snowpack": "^1.0.5"
   },
   "devDependencies": {
+    "@jakedeichert/eslint-config": "^4.0.5",
     "prettier": "^1.16.1",
     "serve": "^11.1.0",
     "svelte": "^3.7.1"
