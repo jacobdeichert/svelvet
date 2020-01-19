@@ -4,7 +4,7 @@ module.exports = {
     trailingComma: 'es5',
     overrides: [
         {
-            files: ['*.json'],
+            files: ['*.json', '*.yml'],
             options: {
                 tabWidth: 2,
             },

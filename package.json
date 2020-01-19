@@ -11,7 +11,8 @@
     "build": "npm run clean && tsc",
     "test": "./scripts/test.sh",
     "format": "prettier '**/*.{js,jsx,ts,tsx,css,html,json,yml}' --write --ignore-path .gitignore",
-    "lint": "eslint . --ignore-pattern dist"
+    "format:check": "prettier '**/*.{js,jsx,ts,tsx,css,html,json,yml}' --list-different --ignore-path .gitignore",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern node_modules"
   },
   "dependencies": {
     "chokidar": "^3.3.1",
