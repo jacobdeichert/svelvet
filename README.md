@@ -133,7 +133,7 @@ I don't need to support non-esm browsers for personal projects and I really like
 
 Many of you will not be able to use this if you depend on custom import types or other fancy loaders. This project is just not for you!
 
-But seriously, give [snowpack][snowpack_website] a read to understand the benefits gained by the prevention of complexity that comes with many build processes today.
+But seriously, give [snowpack][snowpack_website] a read to understand the benefits of leaning on standard esm imports, allowing you to avoid a bundling process entirely.
 
 
 ### Can I override the babel config?
