@@ -5,7 +5,7 @@
   "author": "Jake Deichert",
   "repository": "github:jakedeichert/svelvet",
   "license": "MIT",
-  "bin": "./lib/index.js",
+  "bin": "./bin/index.js",
   "scripts": {
     "clean": "rm -rf lib",
     "build": "npm run clean && tsc",
