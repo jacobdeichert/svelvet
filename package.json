@@ -8,7 +8,7 @@
     "build": "npm run clean && node scripts/compile.js",
     "build:prod": "NODE_ENV=production npm run build",
     "clean": "rm -rf dist && mkdir dist && cp -R public/* dist",
-    "format": "prettier {scripts,src,test}/**/*.{js,jsx,ts,tsx,css,html,json,yml} --write",
+    "format": "prettier **/*.{js,jsx,ts,tsx,css,html,json,yml} --write --ignore-path .gitignore",
     "lint": "eslint . --ignore-pattern dist"
   },
   "dependencies": {
