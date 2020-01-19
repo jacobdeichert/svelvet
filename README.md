@@ -27,6 +27,17 @@ A cli [svelte][svelte] compiler & watcher that works with [snowpack][snowpack].
 
 
 
+## How it works
+
+The goal of `svelvet` is to make `svelte` play nicely with `snowpack` and `web_modules`.
+
+As of today, svelte depends on a loader for webpack or rollup which compiles your svelte components into individual js files. Since snowpack's goal is to avoid the need for a bundler, we can't use those loaders, but we can use [svelte's internal compiler api][svelte_compiler] to do 95% of the work for us. On top of that, `svelvet` adds automatic file watching to recompile your svelte files just like a loader would, but much faster!
+
+To do this, `svelvet` finds all your `src/**/*.svelte` files and compiles them to `dist/**/*.js`. On the initial build, we run snowpack (**only once**) to find all imported third-party dependencies and generate esm (`dist/web_module/`) versions of them. After the initial build, `svelvet` just watches for new or changed files and recompiles them instantly!
+
+
+
+
 ## Getting started
 
 Create a new project and add the required dependencies. An example project is set up [here][basic_example].
@@ -56,6 +67,8 @@ Add a few simple scripts as seen [here][basic_example_package]:
 ~~~
 
 And finally, add some `svelte` files! All source files must be stored inside the `src` directory so `svelvet` can compile them into the `dist` directory.
+
+To compile in dev mode with file watching, use `npm run dev`. To optimize a build for production, use `npm run build`. Then serve your `dist` directory!
 
 You also must have an [`index.html`][basic_example_html] file that loads your entrypoint or root `svelte` component.
 
@@ -102,7 +115,7 @@ Notably, you should leave off the extension. This **is** automatically added dur
 
 ### Cannot pass configuration to svelte's compiler ([Issue #2](https://github.com/jakedeichert/svelvet/issues/2))
 
-Yeah. We'll probably need to look for a [`svelte.config.js`](https://github.com/sveltejs/svelte/issues/1101) file or something. By default, `svelvet` should work great with zero config... but the `svelte` compiler does have [some handy features](https://svelte.dev/docs#svelte_compile) users may want to enable.
+Yeah. We'll probably need to look for a [`svelte.config.js`](https://github.com/sveltejs/svelte/issues/1101) file or something. By default, `svelvet` should work great with zero config... but the `svelte` compiler does have [some handy features][svelte_compiler] users may want to enable.
 
 ### Svelte's debug warnings are not shown ([Issue #3](https://github.com/jakedeichert/svelvet/issues/3))
 
@@ -113,6 +126,15 @@ Yupp, we need to log those to the console probably! We should check out how the 
 
 
 ## FAQ
+
+### Why not just use webpack or rollup?
+
+I don't need to support non-esm browsers for personal projects and I really like the idea of a super light build process. By removing the complexity of configuration and the overhead of bundling, `svelvet` makes the development process an optimal experience for myself and hopefully others :)
+
+Many of you will not be able to use this if you depend on custom import types or other fancy loaders. This project is just not for you!
+
+But seriously, give [snowpack][snowpack_website] a read to understand the benefits gained by the prevention of complexity that comes with many build processes today.
+
 
 ### Can I override the babel config?
 
@@ -130,7 +152,9 @@ Yes! Just create a `babel.config.js` file in the root of your project, and that 
 [github_ci]: https://github.com/jakedeichert/svelvet/actions?query=workflow%3ACI
 [npm]: https://www.npmjs.com/package/svelvet
 [svelte]: https://github.com/sveltejs/svelte
+[svelte_compiler]: https://svelte.dev/docs#svelte_compile
 [snowpack]: https://github.com/pikapkg/snowpack
+[snowpack_website]: https://www.snowpack.dev
 [browser_esm]: https://caniuse.com/#search=modules
 [basic_example]: https://github.com/jakedeichert/svelvet/tree/master/examples/basic
 [basic_example_package]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/package.json
