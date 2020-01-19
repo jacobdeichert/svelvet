@@ -44,22 +44,29 @@ async function compile(file: string): Promise<string | null> {
 
 // Update the import paths to correctly point to web_modules.
 async function transform(destPath: string): Promise<void> {
-    const source = await fs.readFile(destPath, 'utf8');
+    try {
+        const source = await fs.readFile(destPath, 'utf8');
 
-    const transformed = (await babel.transformAsync(source, {
-        plugins: [
-            [
-                'snowpack/assets/babel-plugin.js',
-                {
-                    // Append .js to all src file imports
-                    optionalExtensions: true,
-                },
+        const transformed = (await babel.transformAsync(source, {
+            plugins: [
+                [
+                    'snowpack/assets/babel-plugin.js',
+                    {
+                        // Append .js to all src file imports
+                        optionalExtensions: true,
+                    },
+                ],
             ],
-        ],
-    })) as babel.BabelFileResult;
+        })) as babel.BabelFileResult;
 
-    await fs.writeFile(destPath, transformed.code);
-    console.info(`Babel transformed ${destPath}`);
+        await fs.writeFile(destPath, transformed.code);
+        console.info(`Babel transformed ${destPath}`);
+    } catch (err) {
+        console.log('');
+        console.error(`Failed to transform with babel: ${destPath}`);
+        console.error(err);
+        console.log('');
+    }
 }
 
 // Only needs to run during the initial compile cycle. If a developer adds a new package dependency,
