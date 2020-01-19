@@ -53,16 +53,22 @@ const snowpackDebounced = pDebounce(async () => {
     console.info(`\nBuilding web_modules with snowpack...`);
 
     try {
+        const snowpackLocation = path.resolve(
+            require.resolve('snowpack'),
+            '../index.bin.js'
+        );
+
         const { stdout, stderr } = await exec(
-            `node_modules/.bin/snowpack --include 'dist/**/*' --dest dist/web_modules ${maybeOptimize}`
+            `${snowpackLocation} --include 'dist/**/*' --dest dist/web_modules ${maybeOptimize}`
         );
 
         // TODO: hide behind --verbose flag
         // Show any output from snowpack...
         stdout && console.info(stdout);
         stderr && console.info(stderr);
-    } catch (error) {
-        console.error(error);
+    } catch (err) {
+        console.error(err);
+        throw err;
     }
 }, 50);
 
