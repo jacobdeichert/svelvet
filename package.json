@@ -11,7 +11,7 @@
     "clean": "rm -rf lib",
     "build": "npm run clean && tsc",
     "test": "./scripts/test.sh",
-    "format": "prettier '**/*.{js,jsx,ts,tsx,css,html,json,yml}' --write",
+    "format": "prettier '**/*.{js,jsx,ts,tsx,css,html,json,yml}' --write --ignore-path .gitignore",
     "lint": "eslint . --ignore-pattern dist"
   },
   "dependencies": {
