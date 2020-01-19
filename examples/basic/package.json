@@ -12,6 +12,6 @@
   },
   "devDependencies": {
     "serve": "^11.1.0",
-    "svelvet": "^0.1.0"
+    "svelvet": "^0.1.1"
   }
 }
