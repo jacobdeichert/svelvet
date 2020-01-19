@@ -5,6 +5,7 @@
 
 
 [![build status](https://github.com/jakedeichert/svelvet/workflows/CI/badge.svg?branch=master)][github_ci]
+[![npm version](https://img.shields.io/npm/v/svelvet)][npm]
 
 
 A cli [svelte][svelte] compiler & watcher that works with [snowpack][snowpack].
@@ -20,7 +21,7 @@ A cli [svelte][svelte] compiler & watcher that works with [snowpack][snowpack].
 * Instant dev watch & rebuild cycle
 * Near-instant optimized tree-shaken production builds
 * Keep your `node_modules` super light
-* Only support [browsers that work with esm](https://caniuse.com/#search=modules)
+* Only support [browsers that work with esm][browser_esm]
 * Only support standard esm imports (no css/image/custom-loader-like imports)
 
 
@@ -89,7 +90,7 @@ You also must have an [`index.html`][basic_example_html] file that loads your en
 
 ## Current issues
 
-### Imports don't automatically resolve `index.ext` ([Issue #1](https://github.com/jakedeichert/svelvet/issues/1))
+### Imports don't automatically resolve index.ext ([Issue #1](https://github.com/jakedeichert/svelvet/issues/1))
 
 If you have a structure like `src/components/Footer/index.svelte`, you cannot rely on `index.svelte` being auto resolved. Standard ESM doesn't auto resolve `index.js` files and at the moment we don't transform the imports for you. So when you import this component, you must use a full path to the index.
 
@@ -98,6 +99,15 @@ If you have a structure like `src/components/Footer/index.svelte`, you cannot re
 **After**: `import Footer from './components/Footer/index';`
 
 Notably, you should leave off the extension. This **is** automatically added during the transform phase.
+
+### Cannot pass configuration to svelte's compiler ([Issue #2](https://github.com/jakedeichert/svelvet/issues/2))
+
+Yeah. We'll probably need to look for a [`svelte.config.js`](https://github.com/sveltejs/svelte/issues/1101) file or something. By default, `svelvet` should work great with zero config... but the `svelte` compiler does have [some handy features](https://svelte.dev/docs#svelte_compile) users may want to enable.
+
+### Svelte's debug warnings are not shown ([Issue #3](https://github.com/jakedeichert/svelvet/issues/3))
+
+Yupp, we need to log those to the console probably! We should check out how the `svelte` `webpack` and `rollup` loaders work.
+
 
 
 
@@ -118,8 +128,10 @@ Yes! Just create a `babel.config.js` file in the root of your project, and that 
 
 
 [github_ci]: https://github.com/jakedeichert/svelvet/actions?query=workflow%3ACI
+[npm]: https://www.npmjs.com/package/svelvet
 [svelte]: https://github.com/sveltejs/svelte
 [snowpack]: https://github.com/pikapkg/snowpack
+[browser_esm]: https://caniuse.com/#search=modules
 [basic_example]: https://github.com/jakedeichert/svelvet/tree/master/examples/basic
 [basic_example_package]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/package.json
 [basic_example_html]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/public/index.html
