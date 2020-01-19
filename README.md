@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="180" width="210" src="https://user-images.githubusercontent.com/1631044/72685228-21939380-3ab6-11ea-8664-f074169bdf24.png" alt="svelvet logo">
+  <img height="180" width="210" src="https://user-images.githubusercontent.com/1631044/72686319-5d802600-3ac1-11ea-8ef2-1f61fb15ddc6.png" alt="svelvet logo">
 </p>
 
 
