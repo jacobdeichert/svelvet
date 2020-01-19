@@ -16,7 +16,7 @@ A cli [svelte][svelte] compiler & watcher that works with [snowpack][snowpack].
 ## Goals
 
 * No bundler required
-* _Literally_ no config required
+* No config required
 * Integrate directly with snowpack for an optimal experience
 * Instant dev watch & rebuild cycle
 * Near-instant optimized tree-shaken production builds
