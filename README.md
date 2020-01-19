@@ -7,7 +7,7 @@
 [![build status](https://github.com/jakedeichert/svelvet/workflows/CI/badge.svg?branch=master)][github_ci]
 
 
-A cli `svelte` compiler & watcher that works with [snowpack][snowpack].
+A cli [svelte][svelte] compiler & watcher that works with [snowpack][snowpack].
 
 
 
@@ -117,6 +117,7 @@ Yes! Just create a `babel.config.js` file in the root of your project, and that 
 
 
 [github_ci]: https://github.com/jakedeichert/svelvet/actions?query=workflow%3ACI
+[svelte]: https://github.com/sveltejs/svelte
 [snowpack]: https://github.com/pikapkg/snowpack
 [basic_example]: https://github.com/jakedeichert/svelvet/tree/master/examples/basic
 [basic_example_package]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/package.json
