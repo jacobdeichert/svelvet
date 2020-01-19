@@ -1,0 +1,16 @@
+{
+  "name": "sveltepack-test",
+  "private": true,
+  "scripts": {
+    "dev": "serve --listen 8080 --single dist",
+    "build": "npm run clean && node ../scripts/compile.js",
+    "build:prod": "NODE_ENV=production npm run build",
+    "clean": "rm -rf dist && mkdir dist && cp -R public/* dist"
+  },
+  "dependencies": {
+    "svelte": "^3.7.1"
+  },
+  "devDependencies": {
+    "serve": "^11.1.0"
+  }
+}
