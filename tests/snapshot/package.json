@@ -2,10 +2,10 @@
   "name": "svelvet-test",
   "private": true,
   "scripts": {
-    "serve": "serve --listen 8080 --single dist",
-    "build": "npm run clean && svelvet",
-    "build:prod": "NODE_ENV=production npm run build",
-    "clean": "rm -rf dist && mkdir dist && cp -R public/* dist"
+    "dev": "npm run clean && svelvet",
+    "build": "NODE_ENV=production npm run build",
+    "clean": "rm -rf dist && mkdir dist && cp -R public/* dist",
+    "serve": "serve --listen 8080 --single dist"
   },
   "dependencies": {
     "svelte": "^3.7.1"

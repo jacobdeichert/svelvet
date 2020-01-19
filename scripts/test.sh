@@ -6,7 +6,7 @@ cd tests/snapshot
 
 # Install and build the snapshot dist directory
 npm install
-npm run build:prod
+npm run build
 
 # Format dist so it's more readable
 cd ../..
