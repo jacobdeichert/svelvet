@@ -10,7 +10,7 @@ const pDebounce = require('p-debounce');
 
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
 
-async function compile(file) {
+async function compile(file: string) {
     const source = await fs.readFile(file, 'utf8');
 
     const compiled = svelte.compile(source, {
@@ -27,7 +27,7 @@ async function compile(file) {
 }
 
 // Update the import paths to correctly point to web_modules.
-async function transform(destPath) {
+async function transform(destPath: string) {
     const source = await fs.readFile(destPath, 'utf8');
     const transformed = await babel.transformAsync(source, {
         plugins: [
@@ -79,7 +79,7 @@ function main() {
 
     const srcWatcher = chokidar.watch('src');
 
-    srcWatcher.on('add', async path => {
+    srcWatcher.on('add', async (path: string) => {
         const destPath = await compile(path);
 
         // Need to run (only once) before transforming the import paths, or else it will fail.
@@ -93,7 +93,7 @@ function main() {
 
     if (IS_PRODUCTION_MODE) return;
 
-    srcWatcher.on('change', async path => {
+    srcWatcher.on('change', async (path: string) => {
         const destPath = await compile(path);
         transform(destPath);
     });
