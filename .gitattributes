@@ -1,2 +1,2 @@
-examples/*          linguist-generated=true
-tests/snapshot/*    linguist-generated=true
+examples/* linguist-vendored
+tests/snapshot/* linguist-vendored
