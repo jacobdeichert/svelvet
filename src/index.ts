@@ -20,7 +20,7 @@ async function compile(file: string): Promise<string | null> {
         // Don't compile non-svelte files
         const compiled = isSvelte
             ? svelte.compile(source, {
-                  // Not sure what options we should expose here...
+                  dev: !IS_PRODUCTION_MODE,
               }).js.code
             : source;
 
