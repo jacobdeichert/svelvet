@@ -8,6 +8,7 @@
   "bin": "./bin/index.js",
   "scripts": {
     "clean": "rm -rf lib",
+    "dev": "npm run build -- -w",
     "build": "npm run clean && tsc",
     "test": "./scripts/test.sh",
     "format": "prettier '**/*.{js,jsx,ts,tsx,css,html,json,yml}' --write --ignore-path .gitignore",
