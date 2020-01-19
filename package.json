@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@jakedeichert/eslint-config": "^4.0.5",
+    "@types/babel__core": "^7.1.3",
     "@types/node": "^13.1.8",
     "@typescript-eslint/eslint-plugin": "^2.16.0",
     "@typescript-eslint/parser": "^2.16.0",

@@ -1,17 +1,19 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
-const fs = require('fs').promises;
-const path = require('path');
-const svelte = require('svelte/compiler');
-const chokidar = require('chokidar');
-const babel = require('@babel/core');
-const pDebounce = require('p-debounce');
+import * as util from 'util';
+import { exec as execSync } from 'child_process';
+import { promises as fs } from 'fs';
+import * as path from 'path';
+import * as svelte from 'svelte/compiler';
+import * as chokidar from 'chokidar';
+import * as babel from '@babel/core';
+import pDebounce from 'p-debounce';
+
+const exec = util.promisify(execSync);
 
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
 
-async function compile(file: string) {
+async function compile(file: string): Promise<string> {
     const source = await fs.readFile(file, 'utf8');
 
     const compiled = svelte.compile(source, {
@@ -28,9 +30,10 @@ async function compile(file: string) {
 }
 
 // Update the import paths to correctly point to web_modules.
-async function transform(destPath: string) {
+async function transform(destPath: string): Promise<void> {
     const source = await fs.readFile(destPath, 'utf8');
-    const transformed = await babel.transformAsync(source, {
+
+    const transformed = (await babel.transformAsync(source, {
         plugins: [
             [
                 'snowpack/assets/babel-plugin.js',
@@ -40,7 +43,7 @@ async function transform(destPath: string) {
                 },
             ],
         ],
-    });
+    })) as babel.BabelFileResult;
 
     await fs.writeFile(destPath, transformed.code);
     console.info(`Babel transformed ${destPath}`);
@@ -73,7 +76,7 @@ const snowpackDebounced = pDebounce(async () => {
     }
 }, 50);
 
-function main() {
+function main(): void {
     IS_PRODUCTION_MODE
         ? console.info(`Building in production mode...`)
         : console.info(`Watching for files...`);
