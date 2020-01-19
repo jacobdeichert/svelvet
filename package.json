@@ -5,15 +5,21 @@
   "private": true,
   "scripts": {
     "dev": "serve --listen 8080 --single dist",
-    "build": "npm run clean && node scripts/compile.js && npm run snowpack && node scripts/transform.js",
-    "build:prod": "npm run clean && node scripts/compile.js && npm run snowpack -- --optimize && node scripts/transform.js",
-    "snowpack": "snowpack --include 'dist/**/*' --dest dist/web_modules",
+    "build": "npm run clean && node scripts/compile.js",
+    "build:prod": "NODE_ENV=production npm run build",
     "clean": "rm -rf dist && mkdir dist && cp -R public/* dist"
+  },
+  "dependencies": {
+    "chokidar": "^3.3.1",
+    "p-debounce": "^2.1.0",
+    "snowpack": "^1.0.5"
   },
   "devDependencies": {
     "prettier": "^1.16.1",
     "serve": "^11.1.0",
-    "snowpack": "^1.0.5",
+    "svelte": "^3.7.1"
+  },
+  "peerDependencies": {
     "svelte": "^3.7.1"
   }
 }
