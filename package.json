@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "clean": "rm -rf lib",
+    "build": "npm run clean && tsc",
     "test": "./scripts/test.sh",
     "format": "prettier '**/*.{js,jsx,ts,tsx,css,html,json,yml}' --write",
     "lint": "eslint . --ignore-pattern dist"
@@ -15,8 +17,10 @@
   },
   "devDependencies": {
     "@jakedeichert/eslint-config": "^4.0.5",
+    "@types/node": "^13.1.8",
     "prettier": "^1.16.1",
-    "svelte": "^3.7.1"
+    "svelte": "^3.7.1",
+    "typescript": "^3.7.5"
   },
   "peerDependencies": {
     "svelte": "^3.7.1"
