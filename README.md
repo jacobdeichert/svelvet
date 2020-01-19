@@ -18,8 +18,9 @@ A cli [svelte][svelte] compiler & watcher that works with [snowpack][snowpack].
 * _Literally_ no config required
 * Integrate directly with snowpack for an optimal experience
 * Instant dev watch & rebuild cycle
-* Near-instant optimized production builds
+* Near-instant optimized tree-shaken production builds
 * Keep your `node_modules` super light
+* Only support [browsers that work with esm](https://caniuse.com/#search=modules)
 * Only support standard esm imports (no css/image/custom-loader-like imports)
 
 
