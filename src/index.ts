@@ -12,20 +12,34 @@ const exec = util.promisify(execSync);
 
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
 
-async function compile(file: string): Promise<string> {
-    const source = await fs.readFile(file, 'utf8');
+async function compile(file: string): Promise<string | null> {
+    try {
+        const source = await fs.readFile(file, 'utf8');
+        const isSvelte = file.endsWith('.svelte');
 
-    const compiled = svelte.compile(source, {
-        // Not sure what options we should expose here...
-    });
+        // Don't compile non-svelte files
+        const compiled = isSvelte
+            ? svelte.compile(source, {
+                  // Not sure what options we should expose here...
+              }).js.code
+            : source;
 
-    // Create all ancestor directories for this file
-    const destPath = file.replace(/^src\//, 'dist/').replace(/.svelte$/, '.js');
-    await fs.mkdir(path.dirname(destPath), { recursive: true });
-    await fs.writeFile(destPath, compiled.js.code);
-    console.info(`Svelte compiled ${destPath}`);
+        // Create all ancestor directories for this file
+        const destPath = file
+            .replace(/^src\//, 'dist/')
+            .replace(/.svelte$/, '.js');
+        await fs.mkdir(path.dirname(destPath), { recursive: true });
+        await fs.writeFile(destPath, compiled);
+        console.info(`Svelte compiled ${destPath}`);
 
-    return destPath;
+        return destPath;
+    } catch (err) {
+        console.log('');
+        console.error(`Failed to compile with svelte: ${file}`);
+        console.error(err);
+        console.log('');
+        return null;
+    }
 }
 
 // Update the import paths to correctly point to web_modules.
@@ -70,8 +84,10 @@ const snowpackDebounced = pDebounce(async () => {
         stdout && console.info(stdout);
         stderr && console.info(stderr);
     } catch (err) {
+        console.log('');
+        console.error('Failed to build with snowpack');
         console.error(err);
-        throw err;
+        console.log('');
     }
 }, 50);
 
@@ -85,10 +101,11 @@ function main(): void {
     srcWatcher.on('add', async (path: string) => {
         const destPath = await compile(path);
 
-        // Need to run (only once) before transforming the import paths, or else it will fail.
-        await snowpackDebounced();
-
-        await transform(destPath);
+        if (destPath) {
+            // Need to run (only once) before transforming the import paths, or else it will fail.
+            await snowpackDebounced();
+            await transform(destPath);
+        }
 
         // Don't continue watching. This is safe if called multiple times.
         IS_PRODUCTION_MODE && srcWatcher.close();
@@ -98,6 +115,7 @@ function main(): void {
 
     srcWatcher.on('change', async (path: string) => {
         const destPath = await compile(path);
+        if (!destPath) return;
         transform(destPath);
     });
 }
