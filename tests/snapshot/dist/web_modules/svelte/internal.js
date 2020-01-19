@@ -28,81 +28,93 @@ function i(t) {
 function a(t) {
     return document.createElement(t);
 }
-function l() {
-    return (t = ' '), document.createTextNode(t);
-    var t;
+function l(t) {
+    return document.createTextNode(t);
+}
+function d() {
+    return l(' ');
 }
 function s(t, n, e) {
     null == e
         ? t.removeAttribute(n)
         : t.getAttribute(n) !== e && t.setAttribute(n, e);
 }
-let d;
-function p(t) {
-    d = t;
+function p(t, n) {
+    (n = '' + n), t.data !== n && (t.data = n);
 }
-const h = [],
-    $ = [],
-    m = [],
-    g = [],
-    y = Promise.resolve();
-let b = !1;
-function _(t) {
-    m.push(t);
+let h;
+function $(t) {
+    h = t;
 }
-function x() {
+function m(t) {
+    (function() {
+        if (!h)
+            throw new Error('Function called outside component initialization');
+        return h;
+    })().$$.on_mount.push(t);
+}
+const g = [],
+    y = [],
+    _ = [],
+    b = [],
+    x = Promise.resolve();
+let w = !1;
+function E(t) {
+    _.push(t);
+}
+function v() {
     const t = new Set();
     do {
-        for (; h.length; ) {
-            const t = h.shift();
-            p(t), v(t.$$);
+        for (; g.length; ) {
+            const t = g.shift();
+            $(t), A(t.$$);
         }
-        for (; $.length; ) $.pop()();
-        for (let n = 0; n < m.length; n += 1) {
-            const e = m[n];
+        for (; y.length; ) y.pop()();
+        for (let n = 0; n < _.length; n += 1) {
+            const e = _[n];
             t.has(e) || (e(), t.add(e));
         }
-        m.length = 0;
-    } while (h.length);
-    for (; g.length; ) g.pop()();
-    b = !1;
+        _.length = 0;
+    } while (g.length);
+    for (; b.length; ) b.pop()();
+    w = !1;
 }
-function v(t) {
+function A(t) {
     if (null !== t.fragment) {
         t.update(), o(t.before_update);
         const n = t.dirty;
         (t.dirty = [-1]),
             t.fragment && t.fragment.p(t.ctx, n),
-            t.after_update.forEach(_);
+            t.after_update.forEach(E);
     }
 }
-const w = new Set();
-function A(t, n) {
-    t && t.i && (w.delete(t), t.i(n));
+const k = new Set();
+function N(t, n) {
+    t && t.i && (k.delete(t), t.i(n));
 }
-function E(t, n, e, o) {
+function j(t, n, e, o) {
     if (t && t.o) {
-        if (w.has(t)) return;
-        w.add(t),
+        if (k.has(t)) return;
+        k.add(t),
             (void 0).c.push(() => {
-                w.delete(t), o && (e && t.d(1), o());
+                k.delete(t), o && (e && t.d(1), o());
             }),
             t.o(n);
     }
 }
-function k(t) {
+function C(t) {
     t && t.c();
 }
-function N(t, e, c) {
+function O(t, e, c) {
     const { fragment: u, on_mount: f, on_destroy: i, after_update: a } = t.$$;
     u && u.m(e, c),
-        _(() => {
+        E(() => {
             const e = f.map(n).filter(r);
             i ? i.push(...e) : o(e), (t.$$.on_mount = []);
         }),
-        a.forEach(_);
+        a.forEach(E);
 }
-function j(t, n) {
+function S(t, n) {
     const e = t.$$;
     null !== e.fragment &&
         (o(e.on_destroy),
@@ -110,16 +122,16 @@ function j(t, n) {
         (e.on_destroy = e.fragment = null),
         (e.ctx = []));
 }
-function C(t, n) {
+function q(t, n) {
     -1 === t.$$.dirty[0] &&
-        (h.push(t), b || ((b = !0), y.then(x)), t.$$.dirty.fill(0)),
+        (g.push(t), w || ((w = !0), x.then(v)), t.$$.dirty.fill(0)),
         (t.$$.dirty[(n / 31) | 0] |= 1 << n % 31);
 }
-function O(n, r, c, u, f, i, a = [-1]) {
-    const l = d;
-    p(n);
-    const s = r.props || {},
-        h = (n.$$ = {
+function z(n, r, c, u, f, i, a = [-1]) {
+    const l = h;
+    $(n);
+    const d = r.props || {},
+        s = (n.$$ = {
             fragment: null,
             ctx: null,
             props: i,
@@ -134,39 +146,39 @@ function O(n, r, c, u, f, i, a = [-1]) {
             callbacks: e(),
             dirty: a,
         });
-    let $ = !1;
-    (h.ctx = c
-        ? c(n, s, (t, e, ...o) => {
+    let p = !1;
+    (s.ctx = c
+        ? c(n, d, (t, e, ...o) => {
               const r = o.length ? o[0] : e;
               return (
-                  h.ctx &&
-                      f(h.ctx[t], (h.ctx[t] = r)) &&
-                      (h.bound[t] && h.bound[t](r), $ && C(n, t)),
+                  s.ctx &&
+                      f(s.ctx[t], (s.ctx[t] = r)) &&
+                      (s.bound[t] && s.bound[t](r), p && q(n, t)),
                   e
               );
           })
         : []),
-        h.update(),
-        ($ = !0),
-        o(h.before_update),
-        (h.fragment = !!u && u(h.ctx)),
+        s.update(),
+        (p = !0),
+        o(s.before_update),
+        (s.fragment = !!u && u(s.ctx)),
         r.target &&
             (r.hydrate
-                ? h.fragment &&
-                  h.fragment.l(
+                ? s.fragment &&
+                  s.fragment.l(
                       (function(t) {
                           return Array.from(t.childNodes);
                       })(r.target)
                   )
-                : h.fragment && h.fragment.c(),
-            r.intro && A(n.$$.fragment),
-            N(n, r.target, r.anchor),
-            x()),
-        p(l);
+                : s.fragment && s.fragment.c(),
+            r.intro && N(n.$$.fragment),
+            O(n, r.target, r.anchor),
+            v()),
+        $(l);
 }
-class S {
+class B {
     $destroy() {
-        j(this, 1), (this.$destroy = t);
+        S(this, 1), (this.$destroy = t);
     }
     $on(t, n) {
         const e = this.$$.callbacks[t] || (this.$$.callbacks[t] = []);
@@ -181,20 +193,23 @@ class S {
     $set() {}
 }
 export {
-    S as SvelteComponent,
+    B as SvelteComponent,
     u as append,
     s as attr,
-    k as create_component,
-    j as destroy_component,
+    C as create_component,
+    S as destroy_component,
     i as detach,
     a as element,
-    O as init,
+    z as init,
     f as insert,
-    N as mount_component,
+    O as mount_component,
     t as noop,
+    m as onMount,
     c as safe_not_equal,
-    l as space,
-    A as transition_in,
-    E as transition_out,
+    p as set_data,
+    d as space,
+    l as text,
+    N as transition_in,
+    j as transition_out,
 };
 //# sourceMappingURL=internal.js.map
