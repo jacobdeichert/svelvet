@@ -46,7 +46,7 @@ function create_fragment(ctx) {
     };
 }
 
-const HEADER_NAME = 'sveltepackkkkkkk';
+const HEADER_NAME = 'svelvetttttttt';
 
 class Component extends SvelteComponent {
     constructor(options) {

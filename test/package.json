@@ -1,14 +1,14 @@
 {
-  "name": "sveltepack-test",
+  "name": "svelvet-test",
   "private": true,
   "scripts": {
     "dev": "serve --listen 8080 --single dist",
-    "build": "npm run clean && node ../scripts/compile.js",
+    "build": "npm run clean && svelvet",
     "build:prod": "NODE_ENV=production npm run build",
     "clean": "rm -rf dist && mkdir dist && cp -R public/* dist"
   },
   "dependencies": {
-    "sveltepack": "file:..",
+    "svelvet": "file:..",
     "svelte": "^3.7.1"
   },
   "devDependencies": {

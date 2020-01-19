@@ -1,5 +1,5 @@
 <script>
-    const HEADER_NAME = 'sveltepackkkkkkk';
+    const HEADER_NAME = 'svelvetttttttt';
 </script>
 
 <div class="header">

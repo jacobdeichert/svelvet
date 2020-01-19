@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /* eslint-disable no-console */
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
@@ -46,7 +47,7 @@ async function transform(destPath: string) {
 }
 
 // Only needs to run during the initial compile cycle. If a developer adds a new package dependency,
-// they should restart sveltepack.
+// they should restart svelvet.
 const snowpackDebounced = pDebounce(async () => {
     const maybeOptimize = IS_PRODUCTION_MODE ? '--optimize' : '';
 
