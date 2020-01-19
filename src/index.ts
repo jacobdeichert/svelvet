@@ -28,8 +28,15 @@ async function compile(file: string): Promise<string | null> {
         const destPath = file
             .replace(/^src\//, 'dist/')
             .replace(/.svelte$/, '.js');
+
         await fs.mkdir(path.dirname(destPath), { recursive: true });
         await fs.writeFile(destPath, compiled);
+
+        // Don't compile/transpile any non-js files
+        if (!destPath.endsWith('.js') && !destPath.endsWith('.mjs')) {
+            return null;
+        }
+
         console.info(`Svelte compiled ${destPath}`);
 
         return destPath;
