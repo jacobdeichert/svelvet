@@ -7,7 +7,7 @@
   "license": "MIT",
   "bin": "./bin/index.js",
   "scripts": {
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "clean": "rm -rf lib",
     "dev": "npm run build -- -w",
     "build": "npm run clean && tsc",
