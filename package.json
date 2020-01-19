@@ -1,12 +1,13 @@
 {
   "name": "svelvet",
   "description": "A cli svelte compiler that works with snowpack",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Jake Deichert",
   "repository": "github:jakedeichert/svelvet",
   "license": "MIT",
   "bin": "./bin/index.js",
   "scripts": {
+    "prepublish": "npm run build",
     "clean": "rm -rf lib",
     "dev": "npm run build -- -w",
     "build": "npm run clean && tsc",
