@@ -60,7 +60,7 @@ function create_fragment(ctx) {
     };
 }
 
-const FOOTER_TEXT = 'dis is svelte';
+const FOOTER_TEXT = 'this is svelte and snowpack';
 
 class Component extends SvelteComponent {
     constructor(options) {
