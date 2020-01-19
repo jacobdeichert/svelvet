@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /* eslint-disable no-console */
 import * as util from 'util';
 import { exec as execSync } from 'child_process';
