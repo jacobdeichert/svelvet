@@ -111,6 +111,7 @@ function main(): void {
         : console.info(`Watching for files...`);
 
     const srcWatcher = chokidar.watch('src');
+    const endWatchDebounced = pDebounce(async () => srcWatcher.close(), 10);
 
     srcWatcher.on('add', async (path: string) => {
         const destPath = await compile(path);
@@ -121,8 +122,8 @@ function main(): void {
             await transform(destPath);
         }
 
-        // Don't continue watching. This is safe if called multiple times.
-        IS_PRODUCTION_MODE && srcWatcher.close();
+        // Don't continue watching.
+        IS_PRODUCTION_MODE && endWatchDebounced();
     });
 
     if (IS_PRODUCTION_MODE) return;
