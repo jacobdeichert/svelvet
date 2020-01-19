@@ -1,4 +1,7 @@
-# Svelvet
+<p align="center">
+  <img height="180" width="210" src="https://user-images.githubusercontent.com/1631044/72685228-21939380-3ab6-11ea-8664-f074169bdf24.png" alt="svelvet logo">
+</p>
+
 
 
 [![build status](https://github.com/jakedeichert/svelvet/workflows/CI/badge.svg?branch=master)][github_ci]
@@ -85,7 +88,7 @@ You also must have an [`index.html`][basic_example_html] file that loads your en
 
 ## Current issues
 
-### Imports don't automatically resolve `index.ext`
+### Imports don't automatically resolve `index.ext` ([Issue #1](https://github.com/jakedeichert/svelvet/issues/1))
 
 If you have a structure like `src/components/Footer/index.svelte`, you cannot rely on `index.svelte` being auto resolved. Standard ESM doesn't auto resolve `index.js` files and at the moment we don't transform the imports for you. So when you import this component, you must use a full path to the index.
 
