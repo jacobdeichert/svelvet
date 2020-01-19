@@ -38,7 +38,7 @@ Add a few simple scripts as seen [here][basic_example_package]:
 ~~~json
 "scripts": {
     "dev": "npm run clean && svelvet",
-    "build": "NODE_ENV=production npm run build",
+    "build": "NODE_ENV=production npm run dev",
     "clean": "rm -rf dist && mkdir dist && cp -R public/* dist",
     "serve": "serve --listen 8080 --single dist"
 },
