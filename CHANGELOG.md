@@ -6,6 +6,14 @@
 
 
 
+## v0.1.4 (2020-01-19)
+
+### Fixed
+
+* Fix build race conditions [#6](https://github.com/jakedeichert/svelvet/pull/6)
+
+
+
 
 ## v0.1.3 (2020-01-19)
 
