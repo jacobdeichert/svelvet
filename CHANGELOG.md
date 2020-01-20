@@ -6,6 +6,15 @@
 
 
 
+## v0.1.5 (2020-01-19)
+
+### Fixed
+
+* Prevent corruption of binary asset types during copy [#7](https://github.com/jakedeichert/svelvet/pull/7)
+
+
+
+
 ## v0.1.4 (2020-01-19)
 
 ### Fixed
