@@ -151,8 +151,18 @@ function startWatchMode(): void {
     console.info(`Watching for files...`);
     const srcWatcher = chokidar.watch('src');
 
-    srcWatcher.on('change', async (path: string) => {
-        const destPath = await compile(path);
+    srcWatcher.on('change', async (srcPath: string) => {
+        // Copy updated non-js/svelte files
+        if (
+            !srcPath.endsWith('.svelte') &&
+            !srcPath.endsWith('.js') &&
+            !srcPath.endsWith('.mjs')
+        ) {
+            copyFile(srcPath);
+            return;
+        }
+
+        const destPath = await compile(srcPath);
         if (!destPath) return;
         transform(destPath);
     });
