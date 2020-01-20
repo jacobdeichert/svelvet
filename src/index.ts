@@ -13,41 +13,43 @@ const exec = util.promisify(execSync);
 
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
 
-async function compile(file: string): Promise<string | null> {
+async function compile(srcPath: string): Promise<string | null> {
     try {
-        const source = await fs.readFile(file, 'utf8');
-        const isSvelte = file.endsWith('.svelte');
+        const source = await fs.readFile(srcPath, 'utf8');
+        const isSvelte = srcPath.endsWith('.svelte');
 
-        // Don't compile non-svelte files
-        const compiled = isSvelte
+        // Only compile svelte files
+        const newSource = isSvelte
             ? svelte.compile(source, {
                   dev: !IS_PRODUCTION_MODE,
               }).js.code
             : source;
 
-        // Create all ancestor directories for this file
-        const destPath = file
+        const destPath = srcPath
             .replace(/^src\//, 'dist/')
             .replace(/.svelte$/, '.js');
-
+        // Create all ancestor directories for this file
         await fs.mkdir(path.dirname(destPath), { recursive: true });
-        await fs.writeFile(destPath, compiled);
-
-        // Don't compile/transpile any non-js files
-        if (!destPath.endsWith('.js') && !destPath.endsWith('.mjs')) {
-            return null;
-        }
+        await fs.writeFile(destPath, newSource);
 
         console.info(`Svelte compiled ${destPath}`);
 
         return destPath;
     } catch (err) {
         console.log('');
-        console.error(`Failed to compile with svelte: ${file}`);
+        console.error(`Failed to compile with svelte: ${srcPath}`);
         console.error(err);
         console.log('');
         return null;
     }
+}
+
+async function copyFile(srcPath: string): Promise<void> {
+    const destPath = srcPath.replace(/^src\//, 'dist/');
+    // Create all ancestor directories for this file
+    await fs.mkdir(path.dirname(destPath), { recursive: true });
+    await fs.copyFile(srcPath, destPath);
+    console.info(`Copied asset ${destPath}`);
 }
 
 // Update the import paths to correctly point to web_modules.
@@ -109,29 +111,35 @@ const snowpack = async (): Promise<void> => {
 async function initialBuild(): Promise<void> {
     if (IS_PRODUCTION_MODE) console.info(`Building in production mode...`);
 
-    const concurrentCompilationLimit = pLimit(8);
+    const concurrencyLimit = pLimit(8);
+    const globConfig = { nodir: true };
+    const svelteAndJsFiles = glob.sync('src/**/*.+(js|mjs|svelte)', globConfig);
+    const otherAssetFiles = glob.sync('src/**/*.!(js|mjs|svelte)', globConfig);
 
-    const srcFiles = glob.sync('src/**', {
-        nodir: true,
-    });
+    // Just copy all other asset types, no point in reading them.
+    await Promise.all(
+        otherAssetFiles.map(srcPath =>
+            concurrencyLimit(async () => copyFile(srcPath))
+        )
+    );
 
     // Compile all source files with svelte.
     const destFiles = await Promise.all(
-        srcFiles.map(srcPath =>
-            concurrentCompilationLimit(async () => {
+        svelteAndJsFiles.map(srcPath =>
+            concurrencyLimit(async () => {
                 const destPath = await compile(srcPath);
                 return destPath;
             })
         )
     );
 
-    // Need to run (only once) before transforming the import paths, or else it will fail.
+    // Need to run this (only once) before transforming the import paths, or else it will fail.
     await snowpack();
 
-    // Transform all js files with babel.
+    // Transform all generated js files with babel.
     await Promise.all(
         destFiles.map(destPath =>
-            concurrentCompilationLimit(async () => {
+            concurrencyLimit(async () => {
                 if (!destPath) return;
                 await transform(destPath);
             })
