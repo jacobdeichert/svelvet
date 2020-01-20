@@ -33,7 +33,7 @@ The goal of `svelvet` is to make `svelte` play nicely with `snowpack` and `web_m
 
 As of today, svelte depends on a loader for webpack or rollup which compiles your svelte components into individual js files. Since snowpack's goal is to avoid the need for a bundler, we can't use those loaders, but we can use [svelte's internal compiler api][svelte_compiler] to do 95% of the work for us. On top of that, `svelvet` adds automatic file watching to recompile your svelte files just like a loader would, but much faster!
 
-To do this, `svelvet` finds all your `src/**/*.svelte` files and compiles them to `dist/**/*.js`. On the initial build, we run snowpack (**only once**) to find all imported third-party dependencies and generate esm (`dist/web_module/`) versions of them. After the initial build, `svelvet` just watches for new or changed files and recompiles them instantly!
+To do this, `svelvet` finds all your `src/**/*.svelte` files and compiles them to `dist/**/*.js`. On the initial build, we run snowpack (**only once**) to find all imported third-party dependencies and generate esm versions of them in `dist/web_modules/`. After the initial build, `svelvet` just watches for new or changed files and recompiles them instantly!
 
 
 
@@ -93,19 +93,11 @@ You also must have an [`index.html`][basic_example_html] file that loads your en
 
 
 
-## Possible future features
-
-* Simple `dist` serving in dev mode
-* Auto refresh page after compile/transform
-
-
-
-
-## Current issues
+## Known issues
 
 ### Imports don't automatically resolve index.ext ([Issue #1](https://github.com/jakedeichert/svelvet/issues/1))
 
-If you have a structure like `src/components/Footer/index.svelte`, you cannot rely on `index.svelte` being auto resolved. Standard ESM doesn't auto resolve `index.js` files and at the moment we don't transform the imports for you. So when you import this component, you must use a full path to the index.
+If you have a structure like `src/components/Footer/index.svelte`, you cannot rely on `index.svelte` being auto resolved. Standard esm doesn't auto resolve `index.js` files and at the moment we don't transform the imports for you. So when you import this component, you must use a full path to the index.
 
 **Before (very common)**: `import Footer from './components/Footer';`
 
@@ -124,12 +116,19 @@ Yupp, we need to log those to the console probably! We should check out how the 
 
 
 
+## Possible future features
+
+* Simple `dist` serving in dev mode
+* Auto refresh page after compile/transform
+
+
+
 
 ## FAQ
 
 ### Why not just use webpack or rollup?
 
-I don't need to support non-esm browsers for personal projects and I really like the idea of a super light build process. By removing the complexity of configuration and the overhead of bundling, `svelvet` makes the development process an optimal experience for myself and hopefully others :)
+I don't need to support non-esm browsers for most projects and I really like the idea of a super light build process. By removing the complexity of configuration and the overhead of bundling, `svelvet` makes the development process an optimal experience for myself and hopefully others :)
 
 Many of you will not be able to use this if you depend on custom import types or other fancy loaders. This project is just not for you!
 
