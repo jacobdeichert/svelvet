@@ -57,10 +57,13 @@ Add a few simple scripts as seen [here][basic_example_package]:
 "scripts": {
     // This starts svelvet in watch mode and runs snowpack once to generate dist/web_modules
     "dev": "npm run clean && svelvet",
+
     // This builds the dist directory optimized for production with snowpack
     "build": "NODE_ENV=production npm run dev",
-    // A simple way to copy public files to dist (like index.html or assets)
-    "clean": "rm -rf dist && mkdir dist && cp -R public/* dist",
+
+    // Remove generated files for a clean build
+    "clean": "rm -rf dist",
+
     // An example of how to serve dist locally (requires "npm install serve --save-dev")
     "serve": "serve --listen 8080 --single dist"
 },
