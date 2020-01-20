@@ -6,6 +6,15 @@
 
 
 
+## v0.1.6 (2020-01-20)
+
+### Fixed
+
+* Don't compile changed non-js/svelte assets [#8](https://github.com/jakedeichert/svelvet/pull/8)
+
+
+
+
 ## v0.1.5 (2020-01-19)
 
 ### Fixed
