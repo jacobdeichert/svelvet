@@ -103,8 +103,9 @@ const snowpack = async (): Promise<void> => {
     } catch (err) {
         console.log('');
         console.error('Failed to build with snowpack');
-        console.error(err);
-        console.log('');
+        console.error(err.stderr || err);
+        // Don't continue trying to build if snowpack fails.
+        process.exit(1);
     }
 };
 
