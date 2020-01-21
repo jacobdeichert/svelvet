@@ -149,9 +149,8 @@ async function initialBuild(): Promise<void> {
 
 function startWatchMode(): void {
     console.info(`Watching for files...`);
-    const srcWatcher = chokidar.watch('src');
 
-    srcWatcher.on('change', async (srcPath: string) => {
+    const handleFile = async (srcPath: string): Promise<void> => {
         // Copy updated non-js/svelte files
         if (
             !srcPath.endsWith('.svelte') &&
@@ -165,7 +164,15 @@ function startWatchMode(): void {
         const destPath = await compile(srcPath);
         if (!destPath) return;
         transform(destPath);
+    };
+
+    const srcWatcher = chokidar.watch('src', {
+        ignored: /(^|[/\\])\../, // Ignore dotfiles
+        ignoreInitial: true, // Don't fire "add" events when starting the watcher
     });
+
+    srcWatcher.on('add', handleFile);
+    srcWatcher.on('change', handleFile);
 }
 
 async function main(): Promise<void> {
