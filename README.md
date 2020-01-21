@@ -108,13 +108,22 @@ If you have a structure like `src/components/Footer/index.svelte`, you cannot re
 
 Notably, you should leave off the extension. This **is** automatically added during the transform phase.
 
+
+### Adding a new dependency when running dev mode fails ([Issue #10](https://github.com/jakedeichert/svelvet/issues/10))
+
+So if you start `svelvet` in dev mode and then at any point you add a **new unique node_modules import path**, you'll likely get a runtime error saying that file doesn't exist. The other possibility is that you already had that module installed, but you're referencing a *different* path for the first time.
+
+This happens because `svelvet` runs snowpack **only once** and we don't track your source for new import paths.
+
+The quick workaround is to restart dev mode until this is fixed.
+
 ### Cannot pass configuration to svelte's compiler ([Issue #2](https://github.com/jakedeichert/svelvet/issues/2))
 
 Yeah. We'll probably need to look for a [`svelte.config.js`](https://github.com/sveltejs/svelte/issues/1101) file or something. By default, `svelvet` should work great with zero config... but the `svelte` compiler does have [some handy features][svelte_compiler] users may want to enable.
 
 ### Svelte's debug warnings are not shown ([Issue #3](https://github.com/jakedeichert/svelvet/issues/3))
 
-Yupp, we need to log those to the console probably! We should check out how the `svelte` `webpack` and `rollup` loaders work.
+Yupp, we need to log those to the console probably! We should check out how the `svelte` webpack and rollup loaders work.
 
 
 
