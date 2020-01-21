@@ -6,6 +6,16 @@
 
 
 
+## v0.1.7 (2020-01-20)
+
+### Fixed
+
+* Handle any new files when dev mode is running [#13](https://github.com/jakedeichert/svelvet/pull/13)
+
+
+
+
+
 ## v0.1.6 (2020-01-20)
 
 ### Fixed
