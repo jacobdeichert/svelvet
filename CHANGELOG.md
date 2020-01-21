@@ -3,6 +3,15 @@
 
 ## UNRELEASED
 
+
+
+
+## v0.1.8 (2020-01-20)
+
+### Added
+
+* Add --hydratable and --immutable args for svelte options [#15](https://github.com/jakedeichert/svelvet/pull/15)
+
 ### Fixed
 
 * Bail if there's a snowpack error [#14](https://github.com/jakedeichert/svelvet/pull/14)
