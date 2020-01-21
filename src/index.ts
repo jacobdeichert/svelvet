@@ -21,7 +21,10 @@ async function compile(srcPath: string): Promise<string | null> {
         // Only compile svelte files
         const newSource = isSvelte
             ? svelte.compile(source, {
+                  // https://svelte.dev/docs#Compile_time
                   dev: !IS_PRODUCTION_MODE,
+                  hydratable: process.argv.includes('--hydratable'),
+                  immutable: process.argv.includes('--immutable'),
               }).js.code
             : source;
 
