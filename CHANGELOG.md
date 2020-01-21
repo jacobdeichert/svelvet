@@ -3,6 +3,10 @@
 
 ## UNRELEASED
 
+### Fixed
+
+* Bail if there's a snowpack error [#14](https://github.com/jakedeichert/svelvet/pull/14)
+
 
 
 
