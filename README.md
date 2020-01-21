@@ -19,7 +19,7 @@ A cli [svelte][svelte] compiler & watcher that works with [snowpack][snowpack].
 * No config required
 * Integrate directly with snowpack for an optimal experience
 * Instant dev watch & rebuild cycle
-* Near-instant optimized tree-shaken production builds
+* Fast production builds that are optimized & tree-shaken
 * Keep your `node_modules` super light
 * Only support [browsers that work with esm][browser_esm]
 * Only support standard esm imports (no css/image/custom-loader-like imports)
@@ -117,10 +117,6 @@ This happens because `svelvet` runs snowpack **only once** and we don't track yo
 
 The quick workaround is to restart dev mode until this is fixed.
 
-### Cannot pass configuration to svelte's compiler ([Issue #2](https://github.com/jakedeichert/svelvet/issues/2))
-
-Yeah. We'll probably need to look for a [`svelte.config.js`](https://github.com/sveltejs/svelte/issues/1101) file or something. By default, `svelvet` should work great with zero config... but the `svelte` compiler does have [some handy features][svelte_compiler] users may want to enable.
-
 ### Svelte's debug warnings are not shown ([Issue #3](https://github.com/jakedeichert/svelvet/issues/3))
 
 Yupp, we need to log those to the console probably! We should check out how the `svelte` webpack and rollup loaders work.
@@ -146,12 +142,13 @@ Many of you will not be able to use this if you depend on custom import types or
 
 But seriously, give [snowpack][snowpack_website] a read to understand the benefits of leaning on standard esm imports, allowing you to avoid a bundling process entirely.
 
-
 ### Can I override the babel config?
 
 Yes! Just create a `babel.config.js` file in the root of your project, and that _should_ be properly picked up by `svelvet` and `snowpack`. If not, please file an issue.
 
+### Can I use the hydratable or immutable svelte options?
 
+Yeah, just run `svelvet` with the `--hydratable` or `--immutable` args to enable those options!
 
 
 
