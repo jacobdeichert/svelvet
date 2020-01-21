@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import * as util from 'util';
 import { exec as execSync } from 'child_process';
-import { promises as fs, existsSync } from 'fs';
+import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as svelte from 'svelte/compiler';
 import * as chokidar from 'chokidar';
@@ -13,11 +13,6 @@ const exec = util.promisify(execSync);
 
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
 
-// Check for and load a svelvet config file
-const SVELTET_CONFIG = existsSync('./svelvet.config.js')
-    ? require(path.join(process.cwd(), 'svelvet.config.js'))
-    : { compiler: {} };
-
 async function compile(srcPath: string): Promise<string | null> {
     try {
         const source = await fs.readFile(srcPath, 'utf8');
@@ -26,8 +21,10 @@ async function compile(srcPath: string): Promise<string | null> {
         // Only compile svelte files
         const newSource = isSvelte
             ? svelte.compile(source, {
+                  // https://svelte.dev/docs#Compile_time
                   dev: !IS_PRODUCTION_MODE,
-                  ...SVELTET_CONFIG.compiler,
+                  hydratable: process.argv.includes('--hydratable'),
+                  immutable: process.argv.includes('--immutable'),
               }).js.code
             : source;
 
