@@ -124,14 +124,6 @@ Yupp, we need to log those to the console probably! We should check out how the 
 
 
 
-## Possible future features
-
-* Simple `dist` serving in dev mode
-* Auto refresh page after compile/transform
-
-
-
-
 ## FAQ
 
 ### Why not just use webpack or rollup?
@@ -167,6 +159,13 @@ Yes! Just create a `babel.config.js` file in the root of your project, and that 
 
 Yeah, just run `svelvet` with the `--hydratable` or `--immutable` args to enable those options!
 
+
+
+
+## Possible future features
+
+* Simple `dist` serving in dev mode
+* Auto refresh page after compile/transform
 
 
 
