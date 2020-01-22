@@ -89,7 +89,7 @@ async function minify(destPath: string): Promise<void> {
         const source = await fs.readFile(destPath, 'utf8');
 
         const result = Terser.minify(source, {
-            module: true
+            module: true,
         });
 
         await fs.writeFile(destPath, result.code);
