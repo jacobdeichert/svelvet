@@ -62,7 +62,7 @@ Add a few simple scripts as seen [here][basic_example_package]:
     "build": "NODE_ENV=production npm run dev",
 
     // Remove generated files for a clean build
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist/*",
 
     // An example of how to serve dist locally (requires "npm install serve --save-dev")
     "serve": "serve --listen 8080 --single dist"
@@ -124,14 +124,6 @@ Yupp, we need to log those to the console probably! We should check out how the 
 
 
 
-## Possible future features
-
-* Simple `dist` serving in dev mode
-* Auto refresh page after compile/transform
-
-
-
-
 ## FAQ
 
 ### Why not just use webpack or rollup?
@@ -142,6 +134,23 @@ Many of you will not be able to use this if you depend on custom import types or
 
 But seriously, give [snowpack][snowpack_website] a read to understand the benefits of leaning on standard esm imports, allowing you to avoid a bundling process entirely.
 
+### How do I optimize my dist files for production?
+
+While building in production mode optimizes your `dist/web_modules` (via snowpack), your own modules do not get minified [yet][issue_minify].
+
+There's a variety of ways to optimize your `dist` code further. One simple solution is to use [terser's cli][terser] like so:
+
+~~~sh
+# Install the terser cli
+npm install terser --save-dev
+
+# Add a new script to your package.json
+"minify": "find ./dist -type f \\( -name \"*.js\" \\) -exec terser {} -o {} -m -c --module \\; -exec echo \"Terser minified {}\" \\;"
+
+# And then build and minify for production!
+npm run build && npm run minify
+~~~
+
 ### Can I override the babel config?
 
 Yes! Just create a `babel.config.js` file in the root of your project, and that _should_ be properly picked up by `svelvet` and `snowpack`. If not, please file an issue.
@@ -150,6 +159,13 @@ Yes! Just create a `babel.config.js` file in the root of your project, and that 
 
 Yeah, just run `svelvet` with the `--hydratable` or `--immutable` args to enable those options!
 
+
+
+
+## Possible future features
+
+* Simple `dist` serving in dev mode
+* Auto refresh page after compile/transform
 
 
 
@@ -167,3 +183,5 @@ Yeah, just run `svelvet` with the `--hydratable` or `--immutable` args to enable
 [basic_example]: https://github.com/jakedeichert/svelvet/tree/master/examples/basic
 [basic_example_package]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/package.json
 [basic_example_html]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/public/index.html
+[issue_minify]: https://github.com/jakedeichert/svelvet/issues/17
+[terser]: https://github.com/terser/terser
