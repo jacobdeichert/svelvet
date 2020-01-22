@@ -7,6 +7,7 @@ import * as svelte from 'svelte/compiler';
 import * as chokidar from 'chokidar';
 import * as babel from '@babel/core';
 import * as glob from 'glob';
+import * as Terser from 'terser';
 import pLimit from 'p-limit';
 
 const exec = util.promisify(execSync);
@@ -82,6 +83,25 @@ async function transform(destPath: string): Promise<void> {
     }
 }
 
+// Minify file with terser.
+async function minify(destPath: string): Promise<void> {
+    try {
+        const source = await fs.readFile(destPath, 'utf8');
+
+        const result = Terser.minify(source, {
+            module: true,
+        });
+
+        await fs.writeFile(destPath, result.code);
+        console.info(`Terser minified ${destPath}`);
+    } catch (err) {
+        console.log('');
+        console.error(`Failed to minify with terser: ${destPath}`);
+        console.error(err);
+        console.log('');
+    }
+}
+
 // Only needs to run during the initial compile cycle. If a developer adds a new package dependency,
 // they should restart svelvet.
 const snowpack = async (): Promise<void> => {
@@ -149,6 +169,18 @@ async function initialBuild(): Promise<void> {
             })
         )
     );
+
+    // Minify js files with terser if in production.
+    if (IS_PRODUCTION_MODE && !process.argv.includes('--no-minify')) {
+        await Promise.all(
+            destFiles.map(destPath =>
+                concurrencyLimit(async () => {
+                    if (!destPath) return;
+                    await minify(destPath);
+                })
+            )
+        );
+    }
 }
 
 function startWatchMode(): void {
