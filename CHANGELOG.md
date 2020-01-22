@@ -3,6 +3,11 @@
 
 ## UNRELEASED
 
+
+
+
+## v0.1.9 (2020-01-21)
+
 ### Added
 
 * Add support for minifying in production with terser [#19](https://github.com/jakedeichert/svelvet/pull/19)
