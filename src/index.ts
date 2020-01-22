@@ -169,7 +169,7 @@ async function initialBuild(): Promise<void> {
     );
 
     // Minify js files with terser if in production.
-    if (IS_PRODUCTION_MODE) {
+    if (IS_PRODUCTION_MODE && !process.argv.includes('--no-minify')) {
         await Promise.all(
             destFiles.map(destPath =>
                 concurrencyLimit(async () => {
