@@ -47,7 +47,7 @@ Create a new project and add the required dependencies. An example project is se
 # version to use and when to upgrade!
 npm install svelte
 
-# Install the svelvet cli
+# Install the svelvet cli (requires node v10 or higher)
 npm install svelvet --save-dev
 ~~~
 
@@ -111,7 +111,7 @@ Notably, you should leave off the extension. This **is** automatically added dur
 
 ### Adding a new dependency when running dev mode fails ([Issue #10](https://github.com/jakedeichert/svelvet/issues/10))
 
-So if you start `svelvet` in dev mode and then at any point you add a **new unique node_modules import path**, you'll likely get a runtime error saying that file doesn't exist. The other possibility is that you already had that module installed, but you're referencing a *different* path for the first time.
+So if you start `svelvet` in dev mode and then at any point you add a **new unique node_modules import path**, you'll likely get a runtime error saying that file doesn't exist. The other possibility is that you already had that module installed, but you're referencing a *different path* for the first time.
 
 This happens because `svelvet` runs snowpack **only once** and we don't track your source for new import paths.
 
