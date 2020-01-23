@@ -3,6 +3,10 @@
 
 ## UNRELEASED
 
+### Fixed
+
+* Require node v10+ [#20](https://github.com/jakedeichert/svelvet/pull/20)
+
 
 
 
