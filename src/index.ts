@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import * as util from 'util';
 import { exec as execSync } from 'child_process';
-import { promises as fs } from 'fs';
+import { promises as fs, existsSync } from 'fs';
 import * as path from 'path';
 import * as svelte from 'svelte/compiler';
 import * as chokidar from 'chokidar';
@@ -13,6 +13,21 @@ import pLimit from 'p-limit';
 const exec = util.promisify(execSync);
 
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
+
+// Check for and load a custom babel config file
+const BABEL_CONFIG = existsSync('./babel.config.js')
+    ? require(path.join(process.cwd(), 'babel.config.js'))
+    : {
+          plugins: [
+              [
+                  'snowpack/assets/babel-plugin.js',
+                  {
+                      // Append .js to all src file imports
+                      optionalExtensions: true,
+                  },
+              ],
+          ],
+      };
 
 async function compile(srcPath: string): Promise<string | null> {
     try {
@@ -71,17 +86,10 @@ async function transform(destPath: string): Promise<void> {
     try {
         const source = await fs.readFile(destPath, 'utf8');
 
-        const transformed = (await babel.transformAsync(source, {
-            plugins: [
-                [
-                    'snowpack/assets/babel-plugin.js',
-                    {
-                        // Append .js to all src file imports
-                        optionalExtensions: true,
-                    },
-                ],
-            ],
-        })) as babel.BabelFileResult;
+        const transformed = (await babel.transformAsync(
+            source,
+            BABEL_CONFIG
+        )) as babel.BabelFileResult;
 
         await fs.writeFile(destPath, transformed.code);
         console.info(`Babel transformed ${destPath}`);

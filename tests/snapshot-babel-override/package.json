@@ -1,0 +1,17 @@
+{
+  "name": "svelvet-test",
+  "private": true,
+  "scripts": {
+    "dev": "npm run clean && svelvet",
+    "build": "NODE_ENV=production npm run dev",
+    "clean": "rm -rf dist",
+    "serve": "serve --listen 8080 --single dist"
+  },
+  "dependencies": {
+    "svelte": "^3.7.1"
+  },
+  "devDependencies": {
+    "serve": "^11.1.0",
+    "svelvet": "file:../.."
+  }
+}
