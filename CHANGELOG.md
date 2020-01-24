@@ -1,11 +1,18 @@
 # Changelog
 
 
+
+
 ## UNRELEASED
 
 ### Fixed
 
 * Require node v10+ [#20](https://github.com/jakedeichert/svelvet/pull/20)
+* Log svelte debug warnings [#23](https://github.com/jakedeichert/svelvet/pull/23)
+
+### Meta
+
+* Update snapshot because svelte had a new release [25](https://github.com/jakedeichert/svelvet/pull/25)
 
 
 
