@@ -117,11 +117,6 @@ This happens because `svelvet` runs snowpack **only once** and we don't track yo
 
 The quick workaround is to restart dev mode until this is fixed.
 
-### Svelte's debug warnings are not shown ([Issue #3](https://github.com/jakedeichert/svelvet/issues/3))
-
-Yupp, we need to log those to the console probably! We should check out how the `svelte` webpack and rollup loaders work.
-
-
 
 
 ## FAQ

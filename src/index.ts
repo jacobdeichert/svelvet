@@ -19,15 +19,25 @@ async function compile(srcPath: string): Promise<string | null> {
         const source = await fs.readFile(srcPath, 'utf8');
         const isSvelte = srcPath.endsWith('.svelte');
 
+        let newSource = source;
         // Only compile svelte files
-        const newSource = isSvelte
-            ? svelte.compile(source, {
-                  // https://svelte.dev/docs#Compile_time
-                  dev: !IS_PRODUCTION_MODE,
-                  hydratable: process.argv.includes('--hydratable'),
-                  immutable: process.argv.includes('--immutable'),
-              }).js.code
-            : source;
+        if (isSvelte) {
+            const { js, warnings } = svelte.compile(source, {
+                // https://svelte.dev/docs#Compile_time
+                filename: srcPath,
+                dev: !IS_PRODUCTION_MODE,
+                hydratable: process.argv.includes('--hydratable'),
+                immutable: process.argv.includes('--immutable'),
+            });
+
+            warnings.forEach(warning => {
+                console.warn(
+                    `Warning from compiler in file ${warning.filename}: ${warning.message}\n${warning.frame}`
+                );
+            });
+
+            newSource = js.code;
+        }
 
         const destPath = srcPath
             .replace(/^src\//, 'dist/')
