@@ -7,7 +7,7 @@ import * as svelte from 'svelte/compiler';
 import * as chokidar from 'chokidar';
 import * as babel from '@babel/core';
 import * as glob from 'glob';
-import * as Terser from 'terser';
+import * as terser from 'terser';
 import pLimit from 'p-limit';
 
 const exec = util.promisify(execSync);
@@ -29,7 +29,15 @@ const BABEL_CONFIG = existsSync('./babel.config.js')
           ],
       };
 
-async function compile(srcPath: string): Promise<string | null> {
+async function compile(
+    srcPath: string
+): Promise<{
+    destPath: string | null;
+    logSvelteWarnings: () => void;
+}> {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    let logSvelteWarnings = (): void => {};
+
     try {
         const source = await fs.readFile(srcPath, 'utf8');
         const isSvelte = srcPath.endsWith('.svelte');
@@ -37,7 +45,7 @@ async function compile(srcPath: string): Promise<string | null> {
         let newSource = source;
         // Only compile svelte files
         if (isSvelte) {
-            const { js, warnings } = svelte.compile(source, {
+            const result = svelte.compile(source, {
                 // https://svelte.dev/docs#Compile_time
                 filename: srcPath,
                 dev: !IS_PRODUCTION_MODE,
@@ -45,13 +53,18 @@ async function compile(srcPath: string): Promise<string | null> {
                 immutable: process.argv.includes('--immutable'),
             });
 
-            warnings.forEach(warning => {
-                console.warn(
-                    `Warning from compiler in file ${warning.filename}: ${warning.message}\n${warning.frame}`
-                );
-            });
+            logSvelteWarnings = (): void => {
+                result.warnings.forEach(warning => {
+                    console.log('');
+                    console.warn(
+                        '\x1b[33m%s\x1b[0m',
+                        `SVELTE WARNING (${warning.filename}) -> ${warning.message}`
+                    );
+                    console.warn(warning.frame);
+                });
+            };
 
-            newSource = js.code;
+            newSource = result.js.code;
         }
 
         const destPath = srcPath
@@ -63,13 +76,19 @@ async function compile(srcPath: string): Promise<string | null> {
 
         console.info(`Svelte compiled ${destPath}`);
 
-        return destPath;
+        return {
+            destPath,
+            logSvelteWarnings,
+        };
     } catch (err) {
         console.log('');
         console.error(`Failed to compile with svelte: ${srcPath}`);
         console.error(err);
         console.log('');
-        return null;
+        return {
+            destPath: null,
+            logSvelteWarnings,
+        };
     }
 }
 
@@ -106,7 +125,7 @@ async function minify(destPath: string): Promise<void> {
     try {
         const source = await fs.readFile(destPath, 'utf8');
 
-        const result = Terser.minify(source, {
+        const result = terser.minify(source, {
             module: true,
         });
 
@@ -166,10 +185,12 @@ async function initialBuild(): Promise<void> {
     );
 
     // Compile all source files with svelte.
+    const svelteWarnings: Array<() => void> = [];
     const destFiles = await Promise.all(
         svelteAndJsFiles.map(srcPath =>
             concurrencyLimit(async () => {
-                const destPath = await compile(srcPath);
+                const { destPath, logSvelteWarnings } = await compile(srcPath);
+                svelteWarnings.push(logSvelteWarnings);
                 return destPath;
             })
         )
@@ -199,6 +220,9 @@ async function initialBuild(): Promise<void> {
             )
         );
     }
+
+    // Log all svelte warnings
+    svelteWarnings.forEach(f => f());
 }
 
 function startWatchMode(): void {
@@ -215,9 +239,10 @@ function startWatchMode(): void {
             return;
         }
 
-        const destPath = await compile(srcPath);
+        const { destPath, logSvelteWarnings } = await compile(srcPath);
         if (!destPath) return;
-        transform(destPath);
+        await transform(destPath);
+        logSvelteWarnings();
     };
 
     const srcWatcher = chokidar.watch('src', {
