@@ -10,6 +10,7 @@
 * Require node v10+ [#20](https://github.com/jakedeichert/svelvet/pull/20)
 * Log svelte debug warnings [#23](https://github.com/jakedeichert/svelvet/pull/23)
 * Load babel config override [#26](https://github.com/jakedeichert/svelvet/pull/26)
+* Log svelte warnings after all other logging is complete [#27](https://github.com/jakedeichert/svelvet/pull/27)
 
 ### Meta
 
