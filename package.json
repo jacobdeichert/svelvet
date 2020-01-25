@@ -14,7 +14,7 @@
     "test": "./scripts/test.sh",
     "format": "prettier '**/*.{js,jsx,ts,tsx,css,html,json,yml}' --write --ignore-path .gitignore",
     "format:check": "prettier '**/*.{js,jsx,ts,tsx,css,html,json,yml}' --list-different --ignore-path .gitignore",
-    "lint": "eslint . --ext ts --ignore-pattern dist --ignore-pattern node_modules"
+    "lint": "eslint . --ext ts --ignore-pattern dist --ignore-pattern node_modules --ignore-pattern tests"
   },
   "dependencies": {
     "chokidar": "^3.3.1",

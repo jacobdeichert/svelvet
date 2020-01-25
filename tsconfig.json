@@ -11,5 +11,6 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "exclude": ["tests/**/*.*"]
 }
