@@ -179,7 +179,7 @@ async function initialBuild(): Promise<void> {
         globConfig
     );
     const otherAssetFiles = glob.sync(
-        'src/**/*.!(spec.js|test.js|js|mjs|svelte)',
+        'src/**/*.!(spec.[tj]s|test.[tj]s|[tj]s|mjs|svelte)',
         globConfig
     );
 
