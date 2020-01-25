@@ -174,8 +174,14 @@ async function initialBuild(): Promise<void> {
 
     const concurrencyLimit = pLimit(8);
     const globConfig = { nodir: true };
-    const svelteAndJsFiles = glob.sync('src/**/*.+(js|mjs|svelte)', globConfig);
-    const otherAssetFiles = glob.sync('src/**/*.!(js|mjs|svelte)', globConfig);
+    const svelteAndJsFiles = glob.sync(
+        'src/**/!(*+(spec|test)).+(js|mjs|svelte)',
+        globConfig
+    );
+    const otherAssetFiles = glob.sync(
+        'src/**/*.!(spec.js|test.js|js|mjs|svelte)',
+        globConfig
+    );
 
     // Just copy all other asset types, no point in reading them.
     await Promise.all(
