@@ -5,6 +5,15 @@
 
 ## UNRELEASED
 
+
+
+
+
+
+
+
+## v0.1.10 (2020-01-25)
+
 ### Fixed
 
 * Require node v10+ [#20](https://github.com/jakedeichert/svelvet/pull/20)
