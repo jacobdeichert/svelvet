@@ -64,8 +64,8 @@ Add a few simple scripts as seen [here][basic_example_package]:
     // Remove generated files for a clean build
     "clean": "rm -rf dist/*",
 
-    // An example of how to serve dist locally (requires "npm install serve --save-dev")
-    "serve": "serve --listen 8080 --single dist"
+    // An example of how to serve dist locally (requires "npm i -D servor")
+    "serve": "servor --reload dist"
 },
 ~~~
 

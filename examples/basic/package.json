@@ -5,13 +5,13 @@
     "dev": "npm run clean && svelvet",
     "build": "NODE_ENV=production npm run dev",
     "clean": "rm -rf dist",
-    "serve": "serve --listen 8080 --single dist"
+    "serve": "servor --reload dist"
   },
   "dependencies": {
     "svelte": "^3.7.1"
   },
   "devDependencies": {
-    "serve": "^11.1.0",
+    "servor": "^3.1.0",
     "svelvet": "^0.1.1"
   }
 }
