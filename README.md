@@ -69,7 +69,9 @@ Add a few simple scripts as seen [here][basic_example_package]:
 
 And finally, add some `svelte` files! All source files must be stored inside the `src` directory so `svelvet` can compile them into the `dist` directory.
 
-To compile in dev mode with file watching, use `npm run dev`. To optimize a build for production, use `npm run build`. Then serve your `dist` directory!
+Use `npm run dev` to compile in dev mode. This watches for file changes, compiles to `dist` and starts a live reloading dev server on `localhost:8080`.
+
+To optimize a build for production, use `npm run build`.
 
 You also must have an [`index.html`][basic_example_html] file that loads your entrypoint or root `svelte` component.
 
