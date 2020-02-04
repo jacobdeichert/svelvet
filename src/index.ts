@@ -269,7 +269,7 @@ async function main(): Promise<void> {
     startWatchMode();
 
     if (process.argv.includes('--no-serve')) return;
-    // Start the auto-reloading server
+    // Start the live reloading dev server
     const { url } = await servor({
         root: './dist',
         fallback: 'index.html',
