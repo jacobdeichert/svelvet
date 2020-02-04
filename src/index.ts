@@ -261,15 +261,8 @@ function startWatchMode(): void {
     srcWatcher.on('change', handleFile);
 }
 
-async function main(): Promise<void> {
-    await initialBuild();
-    if (IS_PRODUCTION_MODE) return;
-
-    // Start watching for source changes
-    startWatchMode();
-
+async function startDevServer(): Promise<void> {
     if (process.argv.includes('--no-serve')) return;
-    // Start the live reloading dev server
     const { url } = await servor({
         root: './dist',
         fallback: 'index.html',
@@ -277,6 +270,13 @@ async function main(): Promise<void> {
         reload: true,
     });
     console.info(`Server running on ${url}`);
+}
+
+async function main(): Promise<void> {
+    await initialBuild();
+    if (IS_PRODUCTION_MODE) return;
+    startWatchMode();
+    startDevServer();
 }
 
 main();
