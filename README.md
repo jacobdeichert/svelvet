@@ -55,23 +55,23 @@ Add a few simple scripts as seen [here][basic_example_package]:
 
 ~~~jsonc
 "scripts": {
-    // This starts svelvet in watch mode and runs snowpack once to generate dist/web_modules
+    // This starts svelvet in watch mode and runs snowpack once to generate dist/web_modules.
+    // It also starts a live reloading dev server on localhost:8080
     "dev": "npm run clean && svelvet",
 
     // This builds the dist directory optimized for production with snowpack
     "build": "NODE_ENV=production npm run dev",
 
     // Remove generated files for a clean build
-    "clean": "rm -rf dist/*",
-
-    // An example of how to serve dist locally (requires "npm i -D servor")
-    "serve": "servor --reload dist"
+    "clean": "rm -rf dist/*"
 },
 ~~~
 
 And finally, add some `svelte` files! All source files must be stored inside the `src` directory so `svelvet` can compile them into the `dist` directory.
 
-To compile in dev mode with file watching, use `npm run dev`. To optimize a build for production, use `npm run build`. Then serve your `dist` directory!
+Use `npm run dev` to compile in dev mode. This watches for file changes, compiles to `dist` and starts a live reloading dev server on `localhost:8080`.
+
+To optimize a build for production, use `npm run build`.
 
 You also must have an [`index.html`][basic_example_html] file that loads your entrypoint or root `svelte` component.
 

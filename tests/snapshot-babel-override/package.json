@@ -4,14 +4,12 @@
   "scripts": {
     "dev": "npm run clean && svelvet",
     "build": "NODE_ENV=production npm run dev",
-    "clean": "rm -rf dist",
-    "serve": "servor --reload dist"
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "svelte": "^3.7.1"
   },
   "devDependencies": {
-    "servor": "^3.1.0",
     "svelvet": "file:../.."
   }
 }

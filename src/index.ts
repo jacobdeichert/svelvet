@@ -9,6 +9,7 @@ import * as babel from '@babel/core';
 import * as glob from 'glob';
 import * as terser from 'terser';
 import pLimit from 'p-limit';
+import * as servor from 'servor';
 
 const exec = util.promisify(execSync);
 
@@ -260,9 +261,22 @@ function startWatchMode(): void {
     srcWatcher.on('change', handleFile);
 }
 
+async function startDevServer(): Promise<void> {
+    if (process.argv.includes('--no-serve')) return;
+    const { url } = await servor({
+        root: './dist',
+        fallback: 'index.html',
+        port: 8080,
+        reload: true,
+    });
+    console.info(`Server running on ${url}`);
+}
+
 async function main(): Promise<void> {
     await initialBuild();
-    if (!IS_PRODUCTION_MODE) startWatchMode();
+    if (IS_PRODUCTION_MODE) return;
+    startWatchMode();
+    startDevServer();
 }
 
 main();
