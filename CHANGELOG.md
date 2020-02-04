@@ -11,6 +11,14 @@
 
 
 
+## v0.2.0 (2020-02-03)
+
+### Added
+
+* Use servor as our live reloading dev server [#34](https://github.com/jakedeichert/svelvet/pull/34)
+
+
+
 
 ## v0.1.10 (2020-01-25)
 
