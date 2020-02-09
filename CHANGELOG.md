@@ -11,6 +11,16 @@
 
 
 
+## v0.2.1 (2020-02-09)
+
+### Fixed
+
+* Fix snowpack babel error [#38](https://github.com/jakedeichert/svelvet/pull/38)
+* Update examples/basic svelvet version [#35](https://github.com/jakedeichert/svelvet/pull/35)
+
+
+
+
 ## v0.2.0 (2020-02-03)
 
 ### Added
