@@ -6,44 +6,44 @@ import {
     detach as o,
     element as r,
     init as l,
-    insert as i,
-    mount_component as m,
-    noop as a,
-    safe_not_equal as c,
-    space as f,
+    insert as c,
+    mount_component as f,
+    noop as i,
+    safe_not_equal as m,
+    space as a,
     transition_in as u,
     transition_out as p,
-} from '/web_modules/svelte/internal.js';
+} from '/web_modules/svelte/internal.js?rev=e87f930cb7';
 import $ from './Links.js';
 function d(t) {
-    let l, c, d, w;
-    const x = new $({});
+    let l, m, d, v;
+    const w = new $({});
     return {
         c() {
             (l = r('footer')),
-                (c = r('p')),
-                (c.textContent = `${g}`),
-                (d = f()),
-                n(x.$$.fragment);
+                (m = r('p')),
+                (m.textContent = `${g}`),
+                (d = a()),
+                n(w.$$.fragment);
         },
         m(t, n) {
-            i(t, l, n), e(l, c), e(l, d), m(x, l, null), (w = !0);
+            c(t, l, n), e(l, m), e(l, d), f(w, l, null), (v = !0);
         },
-        p: a,
+        p: i,
         i(t) {
-            w || (u(x.$$.fragment, t), (w = !0));
+            v || (u(w.$$.fragment, t), (v = !0));
         },
         o(t) {
-            p(x.$$.fragment, t), (w = !1);
+            p(w.$$.fragment, t), (v = !1);
         },
         d(t) {
-            t && o(l), s(x);
+            t && o(l), s(w);
         },
     };
 }
 const g = 'this is svelte and snowpack';
 export default class extends t {
     constructor(t) {
-        super(), l(this, t, null, d, c, {});
+        super(), l(this, t, null, d, m, {});
     }
 }

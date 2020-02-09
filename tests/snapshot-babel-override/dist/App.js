@@ -1,41 +1,41 @@
 import {
     SvelteComponent as e,
-    create_component as n,
-    destroy_component as t,
-    init as o,
-    mount_component as r,
+    create_component as t,
+    destroy_component as r,
+    init as n,
+    mount_component as o,
     noop as s,
     safe_not_equal as m,
-    transition_in as u,
-    transition_out as d,
-} from '/web_modules/svelte/internal.js?v=undefined';
-import { onMount as f } from '/web_modules/svelte/internal.js?v=undefined';
-import i from './components/Header.js';
-function l(e) {
-    let o;
-    const m = new i({});
+    transition_in as c,
+    transition_out as f,
+} from '/web_modules/svelte/internal.js?rev=e87f930cb7';
+import { onMount as l } from '/web_modules/svelte/internal.js?rev=e87f930cb7';
+import u from './components/Header.js';
+function i(e) {
+    let n;
+    const m = new u({});
     return {
         c() {
-            n(m.$$.fragment);
+            t(m.$$.fragment);
         },
-        m(e, n) {
-            r(m, e, n), (o = !0);
+        m(e, t) {
+            o(m, e, t), (n = !0);
         },
         p: s,
         i(e) {
-            o || (u(m.$$.fragment, e), (o = !0));
+            n || (c(m.$$.fragment, e), (n = !0));
         },
         o(e) {
-            d(m.$$.fragment, e), (o = !1);
+            f(m.$$.fragment, e), (n = !1);
         },
         d(e) {
-            t(m, e);
+            r(m, e);
         },
     };
 }
-function c(e) {
+function a(e) {
     return (
-        f(() => {
+        l(() => {
             console.log('mounted');
         }),
         []
@@ -43,6 +43,6 @@ function c(e) {
 }
 export default class extends e {
     constructor(e) {
-        super(), o(this, e, c, l, m, {});
+        super(), n(this, e, a, i, m, {});
     }
 }

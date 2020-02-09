@@ -1,45 +1,45 @@
 import {
     SvelteComponent as e,
     append as t,
-    attr as n,
-    detach as s,
+    attr as s,
+    detach as n,
     element as l,
     init as r,
     insert as a,
     noop as o,
-    safe_not_equal as d,
-} from '/web_modules/svelte/internal.js?v=undefined';
-function b(e) {
-    let r, d;
+    safe_not_equal as b,
+} from '/web_modules/svelte/internal.js?rev=e87f930cb7';
+function d(e) {
+    let r, b;
     return {
         c() {
             (r = l('div')),
-                (d = l('h1')),
-                (d.textContent = `${v}`),
-                n(d, 'class', 'svelte-nwbabr'),
-                n(r, 'class', 'header svelte-nwbabr');
+                (b = l('h1')),
+                (b.textContent = `${c}`),
+                s(b, 'class', 'svelte-nwbabr'),
+                s(r, 'class', 'header svelte-nwbabr');
         },
-        m(e, n) {
-            a(e, r, n), t(r, d);
+        m(e, s) {
+            a(e, r, s), t(r, b);
         },
         p: o,
         i: o,
         o: o,
         d(e) {
-            e && s(r);
+            e && n(r);
         },
     };
 }
-const v = 'svelvetttttttt';
+const c = 'svelvetttttttt';
 export default class extends e {
     constructor(e) {
-        var n;
+        var s;
         super(),
             document.getElementById('svelte-nwbabr-style') ||
-                (((n = l('style')).id = 'svelte-nwbabr-style'),
-                (n.textContent =
+                (((s = l('style')).id = 'svelte-nwbabr-style'),
+                (s.textContent =
                     'h1.svelte-nwbabr{color:#000;font-size:70px}.header.svelte-nwbabr{max-width:800px}'),
-                t(document.head, n)),
-            r(this, e, null, b, d, {});
+                t(document.head, s)),
+            r(this, e, null, d, b, {});
     }
 }
