@@ -4,12 +4,13 @@
   "scripts": {
     "dev": "npm run clean && svelvet",
     "build": "NODE_ENV=production npm run dev",
-    "clean": "rm -rf dist"
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "svelte": "^3.7.1"
   },
   "devDependencies": {
-    "svelvet": "^0.2.0"
+    "svelvet": "^0.2.0",
+    "rimraf": "^3.0.2"
   }
 }
