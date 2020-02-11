@@ -11,6 +11,15 @@
 
 
 
+## v0.3.0 (2020-02-10)
+
+### Breaking Changes
+
+* Auto delete dist directory on build [#42](https://github.com/jakedeichert/svelvet/pull/42)
+
+
+
+
 ## v0.2.1 (2020-02-09)
 
 ### Fixed
