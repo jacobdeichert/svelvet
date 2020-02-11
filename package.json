@@ -20,6 +20,7 @@
     "chokidar": "^3.3.1",
     "glob": "^7.1.6",
     "p-limit": "^2.2.2",
+    "rimraf": "^3.0.2",
     "servor": "^3.1.0",
     "snowpack": "1.2.0",
     "terser": "^4.6.3"
@@ -29,6 +30,7 @@
     "@types/babel__core": "^7.1.3",
     "@types/glob": "^7.1.1",
     "@types/node": "^13.1.8",
+    "@types/rimraf": "^2.0.3",
     "@typescript-eslint/eslint-plugin": "^2.16.0",
     "@typescript-eslint/parser": "^2.16.0",
     "prettier": "^1.16.1",

@@ -2,9 +2,8 @@
   "name": "svelvet-test",
   "private": true,
   "scripts": {
-    "dev": "npm run clean && svelvet",
-    "build": "NODE_ENV=production npm run dev",
-    "clean": "rm -rf dist"
+    "dev": "svelvet",
+    "build": "NODE_ENV=production svelvet"
   },
   "dependencies": {
     "svelte": "3.18.1"

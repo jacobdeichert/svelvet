@@ -10,6 +10,7 @@ import * as glob from 'glob';
 import * as terser from 'terser';
 import pLimit from 'p-limit';
 import * as servor from 'servor';
+import * as rimraf from 'rimraf';
 
 const exec = util.promisify(execSync);
 
@@ -30,6 +31,11 @@ const BABEL_CONFIG = existsSync('./babel.config.js')
               ],
           ],
       };
+
+async function cleanDist(): Promise<void> {
+    if (process.argv.includes('--no-clean')) return;
+    await new Promise(resolve => rimraf('dist', resolve));
+}
 
 async function compile(
     srcPath: string
@@ -274,6 +280,7 @@ async function startDevServer(): Promise<void> {
 }
 
 async function main(): Promise<void> {
+    await cleanDist();
     await initialBuild();
     if (IS_PRODUCTION_MODE) return;
     startWatchMode();
