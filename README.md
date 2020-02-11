@@ -57,13 +57,10 @@ Add a few simple scripts as seen [here][basic_example_package]:
 "scripts": {
     // This starts svelvet in watch mode and runs snowpack once to generate dist/web_modules.
     // It also starts a live reloading dev server on localhost:8080
-    "dev": "npm run clean && svelvet",
+    "dev": "svelvet",
 
     // This builds the dist directory optimized for production with snowpack
-    "build": "NODE_ENV=production npm run dev",
-
-    // Remove generated files for a clean build
-    "clean": "rm -rf dist/*"
+    "build": "NODE_ENV=production svelvet"
 },
 ~~~
 
