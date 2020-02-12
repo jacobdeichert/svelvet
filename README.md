@@ -137,12 +137,6 @@ Yeah, just run `svelvet` with the `--hydratable` or `--immutable` args to enable
 
 
 
-## Possible future features
-
-* Simple `dist` serving in dev mode
-* Auto refresh page after compile/transform
-
-
 
 
 
