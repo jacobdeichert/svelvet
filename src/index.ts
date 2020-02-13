@@ -75,9 +75,7 @@ async function compile(
             newSource = result.js.code;
         }
 
-        const destPath = srcPath
-            .replace(/^src\//, 'dist/')
-            .replace(/.svelte$/, '.js');
+        const destPath = getDestPath(srcPath).replace(/.svelte$/, '.js');
         // Create all ancestor directories for this file
         await fs.mkdir(path.dirname(destPath), { recursive: true });
         await fs.writeFile(destPath, newSource);
@@ -101,11 +99,15 @@ async function compile(
 }
 
 async function copyFile(srcPath: string): Promise<void> {
-    const destPath = srcPath.replace(/^src\//, 'dist/');
+    const destPath = getDestPath(srcPath);
     // Create all ancestor directories for this file
     await fs.mkdir(path.dirname(destPath), { recursive: true });
     await fs.copyFile(srcPath, destPath);
     console.info(`Copied asset ${destPath}`);
+}
+
+function getDestPath(srcPath: string): string {
+    return srcPath.replace(new RegExp(`^src\\${path.sep}`), `dist${path.sep}`);
 }
 
 // Update the import paths to correctly point to web_modules.
