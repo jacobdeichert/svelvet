@@ -8,6 +8,13 @@
 
 
 
+## v0.3.1 (2020-02-12)
+
+### Fixed
+
+* Call node explicitly in order to run snowpack on Windows [#44](https://github.com/jakedeichert/svelvet/pull/44)
+* Use path.sep to fix windows build error [#45](https://github.com/jakedeichert/svelvet/pull/45)
+
 
 
 
