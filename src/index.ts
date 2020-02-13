@@ -161,7 +161,7 @@ const snowpack = async (): Promise<void> => {
         );
 
         const { stdout, stderr } = await exec(
-            `${snowpackLocation} --include 'dist/**/*' --dest dist/web_modules ${maybeOptimize}`
+            `node ${snowpackLocation} --include 'dist/**/*' --dest dist/web_modules ${maybeOptimize}`
         );
 
         // TODO: hide behind --verbose flag
