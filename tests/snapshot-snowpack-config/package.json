@@ -1,0 +1,16 @@
+{
+  "name": "svelvet-test",
+  "private": true,
+  "scripts": {
+    "dev": "svelvet",
+    "build": "NODE_ENV=production svelvet"
+  },
+  "dependencies": {
+    "svelte": "3.18.1",
+    "svelte-routing": "^1.4.0"
+  },
+  "devDependencies": {
+    "rollup-plugin-svelte": "^5.1.1",
+    "svelvet": "file:../.."
+  }
+}
