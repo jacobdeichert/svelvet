@@ -7,71 +7,71 @@ import {
     element as m,
     init as s,
     insert as i,
-    mount_component as f,
-    safe_not_equal as a,
+    mount_component as a,
+    safe_not_equal as f,
     set_data as l,
-    space as c,
-    text as u,
-    transition_in as $,
+    space as u,
+    text as $,
+    transition_in as c,
     transition_out as p,
-} from '/web_modules/svelte/internal.js?rev=e87f930cb7';
-import { onMount as d } from '/web_modules/svelte/internal.js?rev=e87f930cb7';
-import v from './components/Header.js';
-import g from './components/Footer/index.js';
-import { getCurrentTime as j } from './utils/time.js';
-function b(e) {
-    let s, a, d, j, b, w;
-    const x = new v({}),
-        I = new g({});
+} from '/web_modules/svelte/internal.js';
+import { onMount as d } from '/web_modules/svelte/internal.js';
+import g from './components/Header.js';
+import j from './components/Footer/index.js';
+import { getCurrentTime as v } from './utils/time.js';
+function w(e) {
+    let s, f, d, v, w, x;
+    const b = new g({}),
+        I = new j({});
     return {
         c() {
-            r(x.$$.fragment),
-                (s = c()),
-                (a = m('div')),
-                (d = u('Current time is ')),
-                (j = u(e[0])),
-                (b = c()),
+            r(b.$$.fragment),
+                (s = u()),
+                (f = m('div')),
+                (d = $('Current time is ')),
+                (v = $(e[0])),
+                (w = u()),
                 r(I.$$.fragment);
         },
         m(e, r) {
-            f(x, e, r),
+            a(b, e, r),
                 i(e, s, r),
-                i(e, a, r),
-                t(a, d),
-                t(a, j),
-                i(e, b, r),
-                f(I, e, r),
-                (w = !0);
+                i(e, f, r),
+                t(f, d),
+                t(f, v),
+                i(e, w, r),
+                a(I, e, r),
+                (x = !0);
         },
         p(e, [t]) {
-            (!w || 1 & t) && l(j, e[0]);
+            (!x || 1 & t) && l(v, e[0]);
         },
         i(e) {
-            w || ($(x.$$.fragment, e), $(I.$$.fragment, e), (w = !0));
+            x || (c(b.$$.fragment, e), c(I.$$.fragment, e), (x = !0));
         },
         o(e) {
-            p(x.$$.fragment, e), p(I.$$.fragment, e), (w = !1);
+            p(b.$$.fragment, e), p(I.$$.fragment, e), (x = !1);
         },
         d(e) {
-            n(x, e), e && o(s), e && o(a), e && o(b), n(I, e);
+            n(b, e), e && o(s), e && o(f), e && o(w), n(I, e);
         },
     };
 }
-function w(e, t, r) {
+function x(e, t, r) {
     let n;
     return (
         d(() => {
             const e = setInterval(() => {
-                r(0, (n = j()));
+                r(0, (n = v()));
             }, 1e3);
             return () => clearInterval(e);
         }),
-        r(0, (n = j())),
+        r(0, (n = v())),
         [n]
     );
 }
 export default class extends e {
     constructor(e) {
-        super(), s(this, e, w, b, a, {});
+        super(), s(this, e, x, w, f, {});
     }
 }

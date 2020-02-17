@@ -1,31 +1,31 @@
 import {
     SvelteComponent as e,
-    detach as r,
-    element as t,
-    init as n,
+    detach as t,
+    element as n,
+    init as r,
     insert as o,
     noop as s,
     safe_not_equal as l,
-} from '/web_modules/svelte/internal.js?rev=e87f930cb7';
+} from '/web_modules/svelte/internal.js';
 function u(e) {
-    let n;
+    let r;
     return {
         c() {
-            (n = t('nav')), (n.innerHTML = '<a href="/">Home</a>');
+            (r = n('nav')), (r.innerHTML = '<a href="/">Home</a>');
         },
-        m(e, r) {
-            o(e, n, r);
+        m(e, t) {
+            o(e, r, t);
         },
         p: s,
         i: s,
         o: s,
         d(e) {
-            e && r(n);
+            e && t(r);
         },
     };
 }
 export default class extends e {
     constructor(e) {
-        super(), n(this, e, null, u, l, {});
+        super(), r(this, e, null, u, l, {});
     }
 }

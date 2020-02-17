@@ -8,7 +8,7 @@ import {
     insert as a,
     noop as o,
     safe_not_equal as b,
-} from '/web_modules/svelte/internal.js?rev=e87f930cb7';
+} from '/web_modules/svelte/internal.js';
 function d(e) {
     let r, b;
     return {
