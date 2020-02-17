@@ -10,7 +10,7 @@
 
 A cli [svelte][svelte] compiler & watcher that works with [snowpack][snowpack].
 
-
+![screenshot of a svelvet project](https://user-images.githubusercontent.com/1631044/74686352-43f4fb80-519f-11ea-899b-3dadaa7583a1.png)
 
 
 ## Goals
