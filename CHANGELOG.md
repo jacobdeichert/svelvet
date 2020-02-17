@@ -8,6 +8,15 @@
 
 
 
+## v0.3.2 (2020-02-17)
+
+### Fixed
+
+* Upgrade snowpack to support 3rd party svelte files [#48](https://github.com/jakedeichert/svelvet/pull/48)
+
+
+
+
 ## v0.3.1 (2020-02-12)
 
 ### Fixed
