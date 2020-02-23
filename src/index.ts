@@ -155,7 +155,6 @@ async function minify(destPath: string): Promise<void> {
 async function checkForNewWebModules(destPath: string): Promise<void> {
     await initEsModuleLexer;
     const source = await fs.readFile(destPath, 'utf8');
-
     const [esImports] = parse(source);
 
     // Search for new import paths that snowpack hasn't generated yet
@@ -179,27 +178,19 @@ async function snowpack(): Promise<void> {
 
     console.info(`\nBuilding web_modules with snowpack...`);
 
-    try {
-        const snowpackLocation = path.resolve(
-            require.resolve('snowpack'),
-            '../index.bin.js'
-        );
+    const snowpackLocation = path.resolve(
+        require.resolve('snowpack'),
+        '../index.bin.js'
+    );
 
-        const { stdout, stderr } = await exec(
-            `node ${snowpackLocation} --include 'dist/**/*' --dest dist/web_modules ${maybeOptimize}`
-        );
+    const { stdout, stderr } = await exec(
+        `node ${snowpackLocation} --include 'dist/**/*' --dest dist/web_modules ${maybeOptimize}`
+    );
 
-        // TODO: hide behind --verbose flag
-        // Show any output from snowpack...
-        stdout && console.info(stdout);
-        stderr && console.info(stderr);
-    } catch (err) {
-        console.log('');
-        console.error('Failed to build with snowpack');
-        console.error(err.stderr || err);
-        // Don't continue trying to build if snowpack fails.
-        process.exit(1);
-    }
+    // TODO: hide behind --verbose flag
+    // Show any output from snowpack...
+    stdout && console.info(stdout);
+    stderr && console.info(stderr);
 }
 
 async function initialBuild(): Promise<void> {
@@ -235,8 +226,16 @@ async function initialBuild(): Promise<void> {
         )
     );
 
-    // Need to run this (only once) before transforming the import paths, or else it will fail.
-    await snowpack();
+    try {
+        // Need to run this (only once) before transforming the import paths, or else it will fail.
+        await snowpack();
+    } catch (err) {
+        console.error('\n\nFailed to build with snowpack');
+        console.error(err.stderr || err);
+        // Don't continue building...
+        if (IS_PRODUCTION_MODE) process.exit(1);
+        return;
+    }
 
     // Transform all generated js files with babel.
     await Promise.all(
@@ -265,7 +264,7 @@ async function initialBuild(): Promise<void> {
 }
 
 function startWatchMode(): void {
-    console.info(`Watching for files...`);
+    console.info(`\nWatching for files...`);
 
     const handleFile = async (srcPath: string): Promise<void> => {
         // Copy updated non-js/svelte files
