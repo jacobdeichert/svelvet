@@ -11,6 +11,7 @@ import * as terser from 'terser';
 import pLimit from 'p-limit';
 import * as servor from 'servor';
 import * as rimraf from 'rimraf';
+import { init as initEsModuleLexer, parse } from 'es-module-lexer';
 
 const exec = util.promisify(execSync);
 
@@ -149,9 +150,31 @@ async function minify(destPath: string): Promise<void> {
     }
 }
 
-// Only needs to run during the initial compile cycle. If a developer adds a new package dependency,
-// they should restart svelvet.
-const snowpack = async (): Promise<void> => {
+// Check if we should run snowpack again by looking for new import paths
+// that have not been generated into web_modules yet.
+async function checkForNewWebModules(destPath: string): Promise<void> {
+    await initEsModuleLexer;
+    const source = await fs.readFile(destPath, 'utf8');
+
+    const [esImports] = parse(source);
+
+    // Search for new import paths that snowpack hasn't generated yet
+    const foundMissingWebModule = esImports.some(meta => {
+        const importPath = source.substring(meta.s, meta.e);
+        const notRelative = !importPath.startsWith('.');
+        const notAbsolute = !importPath.startsWith('/');
+        // Must be a node_module that snowpack didn't see before
+        return notRelative && notAbsolute;
+    });
+
+    if (foundMissingWebModule) {
+        await snowpack();
+    }
+}
+
+// Only needs to run once during the initial compile cycle. However, if a new import is found
+// in dev mode, snowpack will be ran again.
+async function snowpack(): Promise<void> {
     const maybeOptimize = IS_PRODUCTION_MODE ? '--optimize' : '';
 
     console.info(`\nBuilding web_modules with snowpack...`);
@@ -177,7 +200,7 @@ const snowpack = async (): Promise<void> => {
         // Don't continue trying to build if snowpack fails.
         process.exit(1);
     }
-};
+}
 
 async function initialBuild(): Promise<void> {
     if (IS_PRODUCTION_MODE) console.info(`Building in production mode...`);
@@ -258,6 +281,7 @@ function startWatchMode(): void {
         const { destPath, logSvelteWarnings } = await compile(srcPath);
         if (!destPath) return;
         await transform(destPath);
+        await checkForNewWebModules(destPath);
         logSvelteWarnings();
     };
 
