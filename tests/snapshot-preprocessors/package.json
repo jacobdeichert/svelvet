@@ -1,0 +1,17 @@
+{
+  "name": "svelvet-test",
+  "private": true,
+  "scripts": {
+    "dev": "svelvet --preprocess my-preprocessors.js",
+    "build": "NODE_ENV=production svelvet --preprocess my-preprocessors.js"
+  },
+  "dependencies": {
+    "svelte": "3.18.1"
+  },
+  "devDependencies": {
+    "pug": "^2.0.4",
+    "svelte-preprocess": "^3.4.0",
+    "svelvet": "file:../..",
+    "typescript": "^3.8.2"
+  }
+}
