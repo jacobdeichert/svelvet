@@ -121,7 +121,23 @@ But seriously, give [snowpack][snowpack_website] a read to understand the benefi
 
 ### Can I override the babel config?
 
-Yes! Just create a `babel.config.js` file in the root of your project, and that _should_ be properly picked up by `svelvet` and `snowpack`. If not, please file an issue.
+Yes! Just create a `babel.config.js` file in the root of your project, and that should be properly picked up by `svelvet` and `snowpack`.
+
+### How can I import third-party svelte components?
+
+Support for referencing svelte components from other packages is [not built-in yet](https://github.com/jakedeichert/svelvet/issues/49). For now, you must run `npm i -D rollup-plugin-svelte` and then create a `snowpack.config.js` like this:
+
+~~~js
+const rollupPluginSvelte = require('rollup-plugin-svelte');
+
+module.exports = {
+    rollup: {
+        plugins: [rollupPluginSvelte()]
+    }
+};
+~~~
+
+A full example can be found [here][snowpack_config_example].
 
 ### Can I use the hydratable or immutable svelte options?
 
@@ -148,5 +164,6 @@ By default, svelte compiles your component css and inserts style tags into the D
 [basic_example]: https://github.com/jakedeichert/svelvet/tree/master/examples/basic
 [basic_example_package]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/package.json
 [basic_example_html]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/public/index.html
+[snowpack_config_example]: https://github.com/jakedeichert/svelvet/tree/master/tests/snapshot-snowpack-config
 [issue_preprocess]: https://github.com/jakedeichert/svelvet/issues/24
 [terser]: https://github.com/terser/terser
