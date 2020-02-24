@@ -144,9 +144,36 @@ Yes! Just create a `babel.config.js` file in the root of your project, and that 
 
 Yeah, just run `svelvet` with the `--hydratable` or `--immutable` args to enable those options!
 
+### Can I preprocess my svelte components?
+
+Yupp! You can configure one or more preprocessors that will run before your code gets compiled by svelte. This means you can use `typescript`, `pug`, `sass`, `postcss` or whatever else your chosen preprocessor is capable of handling.
+
+When running `svelvet`, you can now pass a `--preprocess my-preprocessors.js` option. The script that you specify just needs to return an array of preprocessors.
+
+Here's an example using [svelte-preprocess][svelte_preprocess]:
+
+~~~js
+// my-preprocessors.js
+const autoPreprocess = require('svelte-preprocess');
+
+module.exports = [
+    autoPreprocess({
+        typescript: {
+            compilerOptions: {
+                target: 'es2019',
+                baseUrl: './src',
+            },
+            transpileOnly: true,
+        },
+    }),
+];
+~~~
+
+Check out the full example [here][preprocess_example].
+
 ### What happens to the component css?
 
-By default, svelte compiles your component css and inserts style tags into the DOM at runtime. If you need extra preprocessing steps for your css, you'll need to wait until [this issue][issue_preprocess] is fixed.
+By default, svelte compiles your component css and inserts style tags into the DOM at runtime. More advanced css bundling techniques are not supported yet.
 
 
 
@@ -166,5 +193,6 @@ By default, svelte compiles your component css and inserts style tags into the D
 [basic_example_package]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/package.json
 [basic_example_html]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/public/index.html
 [snowpack_config_example]: https://github.com/jakedeichert/svelvet/tree/master/tests/snapshot-snowpack-config
-[issue_preprocess]: https://github.com/jakedeichert/svelvet/issues/24
+[preprocess_example]: https://github.com/jakedeichert/svelvet/tree/master/tests/snapshot-preprocessors
+[svelte_preprocess]: https://github.com/kaisermann/svelte-preprocess
 [terser]: https://github.com/terser/terser
