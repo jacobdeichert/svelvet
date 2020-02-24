@@ -8,6 +8,17 @@
 
 
 
+
+## v0.3.3 (2020-02-23)
+
+### Fixed
+
+* Check for missing web modules in dev mode and fix them [#52](https://github.com/jakedeichert/svelvet/pull/52)
+
+
+
+
+
 ## v0.3.2 (2020-02-17)
 
 ### Fixed
