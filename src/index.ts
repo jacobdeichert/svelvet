@@ -118,10 +118,10 @@ async function transform(
     checkModules: boolean
 ): Promise<void> {
     try {
-        const untransformedSource = await fs.readFile(destPath, 'utf8');
+        const source = await fs.readFile(destPath, 'utf8');
 
         let transformed = (await babel.transformAsync(
-            untransformedSource,
+            source,
             BABEL_CONFIG
         )) as babel.BabelFileResult;
 
@@ -136,7 +136,7 @@ async function transform(
 
                 // Transform again so the paths are updated with the new web_modules...
                 transformed = (await babel.transformAsync(
-                    untransformedSource,
+                    source,
                     BABEL_CONFIG
                 )) as babel.BabelFileResult;
             }
