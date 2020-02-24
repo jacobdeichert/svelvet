@@ -9,9 +9,10 @@ import * as babel from '@babel/core';
 import * as glob from 'glob';
 import * as terser from 'terser';
 import pLimit from 'p-limit';
-import * as servor from 'servor';
-import * as rimraf from 'rimraf';
+import servor from 'servor';
+import rimraf from 'rimraf';
 import { init as initEsModuleLexer, parse } from 'es-module-lexer';
+import throttle from 'lodash.throttle';
 
 const exec = util.promisify(execSync);
 
@@ -308,7 +309,7 @@ function startWatchMode(): void {
     });
 
     srcWatcher.on('add', handleFile);
-    srcWatcher.on('change', handleFile);
+    srcWatcher.on('change', throttle(handleFile, 500, { trailing: false }));
 }
 
 async function startDevServer(): Promise<void> {

@@ -3,6 +3,7 @@
     "target": "ES2018",
     "module": "commonjs",
     "allowJs": false,
+    "esModuleInterop": true,
     "declaration": false,
     "sourceMap": false,
     "outDir": "./lib",
