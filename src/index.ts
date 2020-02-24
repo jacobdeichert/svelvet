@@ -131,8 +131,15 @@ async function transform(
             );
 
             if (foundMissingWebModule) {
-                // Only check this specific file for new imports
-                await snowpack(destPath);
+                try {
+                    // Only check this specific file for new imports
+                    await snowpack(destPath);
+                } catch (err) {
+                    console.error('\n\nFailed to build with snowpack');
+                    console.error(err.stderr || err);
+                    // Don't continue building...
+                    return;
+                }
 
                 // Transform again so the paths are updated with the new web_modules...
                 transformed = (await babel.transformAsync(
