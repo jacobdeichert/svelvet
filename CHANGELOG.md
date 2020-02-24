@@ -9,6 +9,16 @@
 
 
 
+## v0.3.4 (2020-02-24)
+
+### Added
+
+* Add svelte preprocessor support [#53](https://github.com/jakedeichert/svelvet/pull/53)
+
+
+
+
+
 ## v0.3.3 (2020-02-23)
 
 ### Fixed
