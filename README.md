@@ -127,6 +127,9 @@ Yes! Just create a `babel.config.js` file in the root of your project, and that 
 
 Yeah, just run `svelvet` with the `--hydratable` or `--immutable` args to enable those options!
 
+### What happens to the component css?
+
+By default, svelte compiles your component css and inserts style tags into the DOM at runtime. If you need extra preprocessing steps for your css, you'll need to wait until [this issue][issue_preprocess] is fixed.
 
 
 
@@ -145,5 +148,5 @@ Yeah, just run `svelvet` with the `--hydratable` or `--immutable` args to enable
 [basic_example]: https://github.com/jakedeichert/svelvet/tree/master/examples/basic
 [basic_example_package]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/package.json
 [basic_example_html]: https://github.com/jakedeichert/svelvet/blob/master/examples/basic/public/index.html
-[issue_minify]: https://github.com/jakedeichert/svelvet/issues/17
+[issue_preprocess]: https://github.com/jakedeichert/svelvet/issues/24
 [terser]: https://github.com/terser/terser
