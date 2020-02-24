@@ -316,6 +316,7 @@ function startWatchMode(): void {
     });
 
     srcWatcher.on('add', handleFile);
+    // Throttle duplicate change events to prevent unnecessary recompiles
     srcWatcher.on('change', throttle(handleFile, 500, { trailing: false }));
 }
 
