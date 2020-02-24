@@ -4,6 +4,7 @@ import { exec as execSync } from 'child_process';
 import { promises as fs, existsSync } from 'fs';
 import * as path from 'path';
 import * as svelte from 'svelte/compiler';
+import { PreprocessorGroup } from 'svelte/types/compiler/preprocess';
 import * as chokidar from 'chokidar';
 import * as babel from '@babel/core';
 import * as glob from 'glob';
@@ -13,26 +14,46 @@ import servor from 'servor';
 import rimraf from 'rimraf';
 import { init as initEsModuleLexer, parse } from 'es-module-lexer';
 import throttle from 'lodash.throttle';
-
 const exec = util.promisify(execSync);
 
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
+const BABEL_CONFIG = loadBabelConfig();
+const SVELTE_PREPROCESSOR_CONFIG = loadSveltePreprocessors();
 
-// Check for and load a custom babel config file
-const BABEL_CONFIG = existsSync('./babel.config.js')
-    ? require(path.join(process.cwd(), 'babel.config.js'))
-    : {
-          plugins: [
-              [
-                  'snowpack/assets/babel-plugin.js',
-                  {
-                      // Append .js to all src file imports
-                      optionalExtensions: true,
-                      importMap: '../dist/web_modules/import-map.json',
-                  },
-              ],
-          ],
-      };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function loadBabelConfig(): any {
+    if (existsSync('./babel.config.js')) {
+        return require(path.join(process.cwd(), 'babel.config.js'));
+    }
+
+    return {
+        plugins: [
+            [
+                'snowpack/assets/babel-plugin.js',
+                {
+                    // Append .js to all src file imports
+                    optionalExtensions: true,
+                    importMap: '../dist/web_modules/import-map.json',
+                },
+            ],
+        ],
+    };
+}
+
+function loadSveltePreprocessors(): PreprocessorGroup[] {
+    if (!process.argv.includes('--preprocess')) return [];
+
+    // Find the referenced preprocessor script
+    const preprocessConfigPath =
+        process.argv[process.argv.indexOf('--preprocess') + 1];
+
+    if (!existsSync(preprocessConfigPath)) {
+        console.error(`Cannot find preprocessor: ${preprocessConfigPath}`);
+        process.exit(1);
+    }
+
+    return require(path.join(process.cwd(), preprocessConfigPath));
+}
 
 async function cleanDist(): Promise<void> {
     if (process.argv.includes('--no-clean')) return;
@@ -49,12 +70,23 @@ async function compile(
     let logSvelteWarnings = (): void => {};
 
     try {
-        const source = await fs.readFile(srcPath, 'utf8');
+        let source = await fs.readFile(srcPath, 'utf8');
         const isSvelte = srcPath.endsWith('.svelte');
 
-        let newSource = source;
         // Only compile svelte files
         if (isSvelte) {
+            // Run any preprocessors
+            if (SVELTE_PREPROCESSOR_CONFIG.length) {
+                const preprocessed = await svelte.preprocess(
+                    source,
+                    SVELTE_PREPROCESSOR_CONFIG,
+                    {
+                        filename: srcPath,
+                    }
+                );
+                source = preprocessed.code;
+            }
+
             const result = svelte.compile(source, {
                 // https://svelte.dev/docs#Compile_time
                 filename: srcPath,
@@ -74,13 +106,13 @@ async function compile(
                 });
             };
 
-            newSource = result.js.code;
+            source = result.js.code;
         }
 
         const destPath = getDestPath(srcPath).replace(/.svelte$/, '.js');
         // Create all ancestor directories for this file
         await fs.mkdir(path.dirname(destPath), { recursive: true });
-        await fs.writeFile(destPath, newSource);
+        await fs.writeFile(destPath, source);
 
         console.info(`Svelte compiled ${destPath}`);
 
