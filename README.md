@@ -107,6 +107,23 @@ Notably, you should leave off the extension. This **is** automatically added dur
 
 
 
+### Automatically support importing 3rd party svelte files ([Issue #49](https://github.com/jakedeichert/svelvet/issues/49))
+
+Support for referencing svelte components from other packages is [not built-in yet](https://github.com/jakedeichert/svelvet/issues/49). For now, you must run `npm i -D rollup-plugin-svelte` and then create a `snowpack.config.js` file like this:
+
+~~~js
+const rollupPluginSvelte = require('rollup-plugin-svelte');
+
+module.exports = {
+    rollup: {
+        plugins: [rollupPluginSvelte()]
+    }
+};
+~~~
+
+A full example can be found [here][snowpack_config_example].
+
+
 
 
 ## FAQ
@@ -122,22 +139,6 @@ But seriously, give [snowpack][snowpack_website] a read to understand the benefi
 ### Can I override the babel config?
 
 Yes! Just create a `babel.config.js` file in the root of your project, and that should be properly picked up by `svelvet` and `snowpack`.
-
-### How can I import third-party svelte components?
-
-Support for referencing svelte components from other packages is [not built-in yet](https://github.com/jakedeichert/svelvet/issues/49). For now, you must run `npm i -D rollup-plugin-svelte` and then create a `snowpack.config.js` like this:
-
-~~~js
-const rollupPluginSvelte = require('rollup-plugin-svelte');
-
-module.exports = {
-    rollup: {
-        plugins: [rollupPluginSvelte()]
-    }
-};
-~~~
-
-A full example can be found [here][snowpack_config_example].
 
 ### Can I use the hydratable or immutable svelte options?
 
