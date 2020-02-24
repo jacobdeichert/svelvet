@@ -112,14 +112,34 @@ function getDestPath(srcPath: string): string {
 }
 
 // Update the import paths to correctly point to web_modules.
-async function transform(destPath: string): Promise<void> {
+async function transform(
+    destPath: string,
+    checkModules: boolean
+): Promise<void> {
     try {
-        const source = await fs.readFile(destPath, 'utf8');
+        const untransformedSource = await fs.readFile(destPath, 'utf8');
 
-        const transformed = (await babel.transformAsync(
-            source,
+        let transformed = (await babel.transformAsync(
+            untransformedSource,
             BABEL_CONFIG
         )) as babel.BabelFileResult;
+
+        if (checkModules) {
+            const foundMissingWebModule = await checkForNewWebModules(
+                transformed.code || ''
+            );
+
+            if (foundMissingWebModule) {
+                // Only check this specific file for new imports
+                await snowpack(destPath);
+
+                // Transform again so the paths are updated with the new web_modules...
+                transformed = (await babel.transformAsync(
+                    untransformedSource,
+                    BABEL_CONFIG
+                )) as babel.BabelFileResult;
+            }
+        }
 
         await fs.writeFile(destPath, transformed.code);
         console.info(`Babel transformed ${destPath}`);
@@ -152,28 +172,27 @@ async function minify(destPath: string): Promise<void> {
 
 // Check if we should run snowpack again by looking for new import paths
 // that have not been generated into web_modules yet.
-async function checkForNewWebModules(destPath: string): Promise<void> {
+async function checkForNewWebModules(
+    transformedSource: string
+): Promise<boolean> {
     await initEsModuleLexer;
-    const source = await fs.readFile(destPath, 'utf8');
-    const [esImports] = parse(source);
+    const [esImports] = parse(transformedSource);
 
     // Search for new import paths that snowpack hasn't generated yet
     const foundMissingWebModule = esImports.some(meta => {
-        const importPath = source.substring(meta.s, meta.e);
+        const importPath = transformedSource.substring(meta.s, meta.e);
         const notRelative = !importPath.startsWith('.');
         const notAbsolute = !importPath.startsWith('/');
         // Must be a node_module that snowpack didn't see before
         return notRelative && notAbsolute;
     });
 
-    if (foundMissingWebModule) {
-        await snowpack();
-    }
+    return foundMissingWebModule;
 }
 
 // Only needs to run once during the initial compile cycle. However, if a new import is found
 // in dev mode, snowpack will be ran again.
-async function snowpack(): Promise<void> {
+async function snowpack(includeFiles: string): Promise<void> {
     const maybeOptimize = IS_PRODUCTION_MODE ? '--optimize' : '';
 
     console.info(`\nBuilding web_modules with snowpack...`);
@@ -184,7 +203,7 @@ async function snowpack(): Promise<void> {
     );
 
     const { stdout, stderr } = await exec(
-        `node ${snowpackLocation} --include 'dist/**/*' --dest dist/web_modules ${maybeOptimize}`
+        `node ${snowpackLocation} --include '${includeFiles}' --dest dist/web_modules ${maybeOptimize}`
     );
 
     // TODO: hide behind --verbose flag
@@ -228,7 +247,7 @@ async function initialBuild(): Promise<void> {
 
     try {
         // Need to run this (only once) before transforming the import paths, or else it will fail.
-        await snowpack();
+        await snowpack('dist/**/*');
     } catch (err) {
         console.error('\n\nFailed to build with snowpack');
         console.error(err.stderr || err);
@@ -242,7 +261,7 @@ async function initialBuild(): Promise<void> {
         destFiles.map(destPath =>
             concurrencyLimit(async () => {
                 if (!destPath) return;
-                await transform(destPath);
+                await transform(destPath, false);
             })
         )
     );
@@ -279,8 +298,7 @@ function startWatchMode(): void {
 
         const { destPath, logSvelteWarnings } = await compile(srcPath);
         if (!destPath) return;
-        await transform(destPath);
-        await checkForNewWebModules(destPath);
+        await transform(destPath, true);
         logSvelteWarnings();
     };
 
