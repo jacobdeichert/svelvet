@@ -9,8 +9,10 @@ import * as babel from '@babel/core';
 import * as glob from 'glob';
 import * as terser from 'terser';
 import pLimit from 'p-limit';
-import * as servor from 'servor';
-import * as rimraf from 'rimraf';
+import servor from 'servor';
+import rimraf from 'rimraf';
+import { init as initEsModuleLexer, parse } from 'es-module-lexer';
+import throttle from 'lodash.throttle';
 
 const exec = util.promisify(execSync);
 
@@ -111,14 +113,41 @@ function getDestPath(srcPath: string): string {
 }
 
 // Update the import paths to correctly point to web_modules.
-async function transform(destPath: string): Promise<void> {
+async function transform(
+    destPath: string,
+    checkModules: boolean
+): Promise<void> {
     try {
         const source = await fs.readFile(destPath, 'utf8');
 
-        const transformed = (await babel.transformAsync(
+        let transformed = (await babel.transformAsync(
             source,
             BABEL_CONFIG
         )) as babel.BabelFileResult;
+
+        if (checkModules) {
+            const foundMissingWebModule = await checkForNewWebModules(
+                transformed.code || ''
+            );
+
+            if (foundMissingWebModule) {
+                try {
+                    // Only check this specific file for new imports
+                    await snowpack(destPath);
+                } catch (err) {
+                    console.error('\n\nFailed to build with snowpack');
+                    console.error(err.stderr || err);
+                    // Don't continue building...
+                    return;
+                }
+
+                // Transform again so the paths are updated with the new web_modules...
+                transformed = (await babel.transformAsync(
+                    source,
+                    BABEL_CONFIG
+                )) as babel.BabelFileResult;
+            }
+        }
 
         await fs.writeFile(destPath, transformed.code);
         console.info(`Babel transformed ${destPath}`);
@@ -149,35 +178,47 @@ async function minify(destPath: string): Promise<void> {
     }
 }
 
-// Only needs to run during the initial compile cycle. If a developer adds a new package dependency,
-// they should restart svelvet.
-const snowpack = async (): Promise<void> => {
+// Check if we should run snowpack again by looking for new import paths
+// that have not been generated into web_modules yet.
+async function checkForNewWebModules(
+    transformedSource: string
+): Promise<boolean> {
+    await initEsModuleLexer;
+    const [esImports] = parse(transformedSource);
+
+    // Search for new import paths that snowpack hasn't generated yet
+    const foundMissingWebModule = esImports.some(meta => {
+        const importPath = transformedSource.substring(meta.s, meta.e);
+        const notRelative = !importPath.startsWith('.');
+        const notAbsolute = !importPath.startsWith('/');
+        // Must be a node_module that snowpack didn't see before
+        return notRelative && notAbsolute;
+    });
+
+    return foundMissingWebModule;
+}
+
+// Only needs to run once during the initial compile cycle. However, if a new import is found
+// in dev mode, snowpack will be ran again.
+async function snowpack(includeFiles: string): Promise<void> {
     const maybeOptimize = IS_PRODUCTION_MODE ? '--optimize' : '';
 
     console.info(`\nBuilding web_modules with snowpack...`);
 
-    try {
-        const snowpackLocation = path.resolve(
-            require.resolve('snowpack'),
-            '../index.bin.js'
-        );
+    const snowpackLocation = path.resolve(
+        require.resolve('snowpack'),
+        '../index.bin.js'
+    );
 
-        const { stdout, stderr } = await exec(
-            `node ${snowpackLocation} --include 'dist/**/*' --dest dist/web_modules ${maybeOptimize}`
-        );
+    const { stdout, stderr } = await exec(
+        `node ${snowpackLocation} --include '${includeFiles}' --dest dist/web_modules ${maybeOptimize}`
+    );
 
-        // TODO: hide behind --verbose flag
-        // Show any output from snowpack...
-        stdout && console.info(stdout);
-        stderr && console.info(stderr);
-    } catch (err) {
-        console.log('');
-        console.error('Failed to build with snowpack');
-        console.error(err.stderr || err);
-        // Don't continue trying to build if snowpack fails.
-        process.exit(1);
-    }
-};
+    // TODO: hide behind --verbose flag
+    // Show any output from snowpack...
+    stdout && console.info(stdout);
+    stderr && console.info(stderr);
+}
 
 async function initialBuild(): Promise<void> {
     if (IS_PRODUCTION_MODE) console.info(`Building in production mode...`);
@@ -212,15 +253,23 @@ async function initialBuild(): Promise<void> {
         )
     );
 
-    // Need to run this (only once) before transforming the import paths, or else it will fail.
-    await snowpack();
+    try {
+        // Need to run this (only once) before transforming the import paths, or else it will fail.
+        await snowpack('dist/**/*');
+    } catch (err) {
+        console.error('\n\nFailed to build with snowpack');
+        console.error(err.stderr || err);
+        // Don't continue building...
+        if (IS_PRODUCTION_MODE) process.exit(1);
+        return;
+    }
 
     // Transform all generated js files with babel.
     await Promise.all(
         destFiles.map(destPath =>
             concurrencyLimit(async () => {
                 if (!destPath) return;
-                await transform(destPath);
+                await transform(destPath, false);
             })
         )
     );
@@ -242,7 +291,7 @@ async function initialBuild(): Promise<void> {
 }
 
 function startWatchMode(): void {
-    console.info(`Watching for files...`);
+    console.info(`\nWatching for files...`);
 
     const handleFile = async (srcPath: string): Promise<void> => {
         // Copy updated non-js/svelte files
@@ -257,7 +306,7 @@ function startWatchMode(): void {
 
         const { destPath, logSvelteWarnings } = await compile(srcPath);
         if (!destPath) return;
-        await transform(destPath);
+        await transform(destPath, true);
         logSvelteWarnings();
     };
 
@@ -267,7 +316,8 @@ function startWatchMode(): void {
     });
 
     srcWatcher.on('add', handleFile);
-    srcWatcher.on('change', handleFile);
+    // Throttle duplicate change events to prevent unnecessary recompiles
+    srcWatcher.on('change', throttle(handleFile, 500, { trailing: false }));
 }
 
 async function startDevServer(): Promise<void> {
