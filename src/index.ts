@@ -234,6 +234,7 @@ async function checkForNewWebModules(
 // in dev mode, snowpack will be ran again.
 async function snowpack(includeFiles: string): Promise<void> {
     const maybeOptimize = IS_PRODUCTION_MODE ? '--optimize' : '';
+    const maybeStats = IS_PRODUCTION_MODE ? '--stat' : '';
 
     console.info(`\n\nBuilding web_modules with snowpack...`);
 
@@ -252,6 +253,7 @@ async function snowpack(includeFiles: string): Promise<void> {
                 '--dest',
                 'dist/web_modules',
                 maybeOptimize,
+                maybeStats,
             ],
             {
                 // Inherit so snowpack's log coloring is passed through
