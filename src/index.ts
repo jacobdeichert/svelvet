@@ -308,8 +308,7 @@ async function initialBuild(): Promise<void> {
         console.error('\n\nFailed to build with snowpack');
         err && console.error(err.stderr || err);
         // Don't continue building...
-        if (IS_PRODUCTION_MODE) process.exit(1);
-        return;
+        process.exit(1);
     }
 
     // Transform all generated js files with babel.
