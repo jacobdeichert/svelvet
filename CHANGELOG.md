@@ -5,6 +5,9 @@
 
 ## UNRELEASED
 
+### Fixed
+
+* Prevent external imports from triggering snowpack web_module regeneration [#55](https://github.com/jakedeichert/svelvet/pull/55)
 
 
 
