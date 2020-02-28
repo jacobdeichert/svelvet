@@ -223,8 +223,10 @@ async function checkForNewWebModules(
         const importPath = transformedSource.substring(meta.s, meta.e);
         const notRelative = !importPath.startsWith('.');
         const notAbsolute = !importPath.startsWith('/');
+        const notHttp = !importPath.startsWith('http://');
+        const notHttps = !importPath.startsWith('https://');
         // Must be a node_module that snowpack didn't see before
-        return notRelative && notAbsolute;
+        return notRelative && notAbsolute && notHttp && notHttps;
     });
 
     return foundMissingWebModule;
