@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
-import * as util from 'util';
-import { exec as execSync } from 'child_process';
+import { spawn } from 'child_process';
 import { promises as fs, existsSync } from 'fs';
 import * as path from 'path';
 import * as svelte from 'svelte/compiler';
@@ -14,7 +13,6 @@ import servor from 'servor';
 import rimraf from 'rimraf';
 import { init as initEsModuleLexer, parse } from 'es-module-lexer';
 import throttle from 'lodash.throttle';
-const exec = util.promisify(execSync);
 
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
 const BABEL_CONFIG = loadBabelConfig();
@@ -168,7 +166,7 @@ async function transform(
                     await snowpack(destPath);
                 } catch (err) {
                     console.error('\n\nFailed to build with snowpack');
-                    console.error(err.stderr || err);
+                    err && console.error(err.stderr || err);
                     // Don't continue building...
                     return;
                 }
@@ -237,21 +235,35 @@ async function checkForNewWebModules(
 async function snowpack(includeFiles: string): Promise<void> {
     const maybeOptimize = IS_PRODUCTION_MODE ? '--optimize' : '';
 
-    console.info(`\nBuilding web_modules with snowpack...`);
+    console.info(`\n\nBuilding web_modules with snowpack...`);
 
     const snowpackLocation = path.resolve(
         require.resolve('snowpack'),
         '../index.bin.js'
     );
 
-    const { stdout, stderr } = await exec(
-        `node ${snowpackLocation} --include '${includeFiles}' --dest dist/web_modules ${maybeOptimize}`
-    );
-
-    // TODO: hide behind --verbose flag
-    // Show any output from snowpack...
-    stdout && console.info(stdout);
-    stderr && console.info(stderr);
+    await new Promise((resolve, reject) => {
+        const proc = spawn(
+            'node',
+            [
+                snowpackLocation,
+                '--include',
+                includeFiles,
+                '--dest',
+                'dist/web_modules',
+                maybeOptimize,
+            ],
+            {
+                // Inherit so snowpack's log coloring is passed through
+                stdio: 'inherit',
+            }
+        );
+        proc.on('exit', (code: number) => {
+            if (code > 0) return reject();
+            resolve();
+        });
+    });
+    console.log('\n'); // Just add some spacing...
 }
 
 async function initialBuild(): Promise<void> {
@@ -292,7 +304,7 @@ async function initialBuild(): Promise<void> {
         await snowpack('dist/**/*');
     } catch (err) {
         console.error('\n\nFailed to build with snowpack');
-        console.error(err.stderr || err);
+        err && console.error(err.stderr || err);
         // Don't continue building...
         if (IS_PRODUCTION_MODE) process.exit(1);
         return;
