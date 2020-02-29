@@ -141,7 +141,9 @@ async function copyFile(srcPath: string): Promise<void> {
 }
 
 function getDestPath(srcPath: string): string {
-    return path.normalize(srcPath).replace(new RegExp(`^src\\${path.sep}`), `dist${path.sep}`);
+    return path
+        .normalize(srcPath)
+        .replace(new RegExp(`^src\\${path.sep}`), `dist${path.sep}`);
 }
 
 // Update the import paths to correctly point to web_modules.
