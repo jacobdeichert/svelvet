@@ -8,6 +8,14 @@
 
 
 
+## v0.3.6 (2020-03-01)
+
+### Fixed
+
+* Let babel know the absolute file path of the file currently being processed [#61](https://github.com/jakedeichert/svelvet/pull/61)
+
+
+
 
 ## v0.3.5 (2020-03-01)
 
@@ -23,8 +31,6 @@
 
 
 
-
-
 ## v0.3.4 (2020-02-24)
 
 ### Added
@@ -34,13 +40,11 @@
 
 
 
-
 ## v0.3.3 (2020-02-23)
 
 ### Fixed
 
 * Check for missing web modules in dev mode and fix them [#52](https://github.com/jakedeichert/svelvet/pull/52)
-
 
 
 
