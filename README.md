@@ -95,18 +95,6 @@ You also must have an [`index.html`][basic_example_html] file that loads your en
 
 ## Known issues
 
-### Imports don't automatically resolve index.ext ([Issue #1](https://github.com/jakedeichert/svelvet/issues/1))
-
-If you have a structure like `src/components/Footer/index.svelte`, you cannot rely on `index.svelte` being auto resolved. Standard esm doesn't auto resolve `index.js` files and at the moment we don't transform the imports for you. So when you import this component, you must use a full path to the index.
-
-**Before (very common)**: `import Footer from './components/Footer';`
-
-**After**: `import Footer from './components/Footer/index';`
-
-Notably, you should leave off the extension. This **is** automatically added during the transform phase.
-
-
-
 ### Automatically support importing 3rd party svelte files ([Issue #49](https://github.com/jakedeichert/svelvet/issues/49))
 
 Support for referencing svelte components from other packages is [not built-in yet](https://github.com/jakedeichert/svelvet/issues/49). For now, you must run `npm i -D rollup-plugin-svelte` and then create a `snowpack.config.js` file like this:
@@ -170,6 +158,16 @@ module.exports = [
 ~~~
 
 Check out the full example [here][preprocess_example].
+
+### Why don't imports automatically resolve index.svelte or index.js?
+
+If you have a structure like `src/components/Footer/index.svelte`, you cannot rely on `index.svelte` being auto resolved. Standard esm doesn't auto resolve `index.js` files, so when you import this component, you must use a full path to the index.
+
+**❌ Bad**: `import Footer from './components/Footer';`
+
+**✅ Good**: `import Footer from './components/Footer/index';`
+
+Notably, you should leave off the extension. This is automatically added during the transform phase.
 
 ### What happens to the component css?
 
