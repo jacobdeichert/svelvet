@@ -152,10 +152,10 @@ async function transform(
     try {
         const source = await fs.readFile(destPath, 'utf8');
 
-        let transformed = (await babel.transformAsync(
-            source,
-            BABEL_CONFIG
-        )) as babel.BabelFileResult;
+        let transformed = (await babel.transformAsync(source, {
+            ...BABEL_CONFIG,
+            filename: destPath,
+        })) as babel.BabelFileResult;
 
         if (checkModules) {
             const foundMissingWebModule = await checkForNewWebModules(
