@@ -11,7 +11,7 @@
 
 ## v0.3.5 (2020-03-01)
 
-## Added
+### Added
 
 * Pass through snowpack log colors and show stats during production builds [#56](https://github.com/jakedeichert/svelvet/pull/56)
 
