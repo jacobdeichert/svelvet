@@ -5,11 +5,20 @@
 
 ## UNRELEASED
 
+
+
+
+
+## v0.3.5 (2020-03-01)
+
+## Added
+
+* Pass through snowpack log colors and show stats during production builds [#56](https://github.com/jakedeichert/svelvet/pull/56)
+
 ### Fixed
 
 * Prevent external imports from triggering snowpack web_module regeneration [#55](https://github.com/jakedeichert/svelvet/pull/55)
 * Normalize incoming paths to getDestPath for Windows [#57](https://github.com/jakedeichert/svelvet/pull/57)
-* Pass through snowpack log colors and show stats during production builds [#56](https://github.com/jakedeichert/svelvet/pull/56)
 
 
 
