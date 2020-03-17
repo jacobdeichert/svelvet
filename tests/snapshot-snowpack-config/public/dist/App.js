@@ -13,12 +13,12 @@ import {
     text as a,
     transition_in as l,
     transition_out as p,
-} from '/web_modules/svelte/internal.js';
+} from '/dist/web_modules/svelte/internal.js';
 import {
     Router as i,
-    Link as g,
-    Route as d,
-} from '/web_modules/svelte-routing.js';
+    Link as d,
+    Route as g,
+} from '/dist/web_modules/svelte-routing.js';
 import x from './routes/Home.js';
 import w from './routes/About.js';
 function b(t) {
@@ -93,24 +93,24 @@ function v(t) {
 }
 function h(t) {
     let s, f, a, i, x, w;
-    const h = new g({
+    const h = new d({
             props: { to: '/', $$slots: { default: [b] }, $$scope: { ctx: t } },
         }),
-        A = new g({
+        A = new d({
             props: {
                 to: '/about',
                 $$slots: { default: [y] },
                 $$scope: { ctx: t },
             },
         }),
-        H = new d({
+        H = new g({
             props: {
                 path: '/about',
                 $$slots: { default: [j] },
                 $$scope: { ctx: t },
             },
         }),
-        _ = new d({
+        _ = new g({
             props: {
                 path: '/',
                 $$slots: { default: [v] },

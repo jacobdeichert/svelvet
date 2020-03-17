@@ -13,10 +13,10 @@ import {
     set_data as c,
     space as $,
     text as u,
-    transition_in as p,
-    transition_out as d,
-} from '/web_modules/svelte/internal.js';
-import { onMount as g } from '/web_modules/svelte/internal.js';
+    transition_in as d,
+    transition_out as p,
+} from '/dist/web_modules/svelte/internal.js';
+import { onMount as g } from '/dist/web_modules/svelte/internal.js';
 import v from './components/Header.js';
 import j from './components/Footer/index.js';
 import { getCurrentTime as x } from './utils/time.js';
@@ -57,10 +57,10 @@ function w(t) {
             (!_ || 1 & e) && c(b, t[0]);
         },
         i(t) {
-            _ || (p(k.$$.fragment, t), p(F.$$.fragment, t), (_ = !0));
+            _ || (d(k.$$.fragment, t), d(F.$$.fragment, t), (_ = !0));
         },
         o(t) {
-            d(k.$$.fragment, t), d(F.$$.fragment, t), (_ = !1);
+            p(k.$$.fragment, t), p(F.$$.fragment, t), (_ = !1);
         },
         d(t) {
             t && s(i),

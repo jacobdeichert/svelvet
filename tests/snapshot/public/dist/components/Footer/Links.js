@@ -3,22 +3,22 @@ import {
     detach as t,
     element as n,
     init as r,
-    insert as o,
-    noop as s,
+    insert as s,
+    noop as o,
     safe_not_equal as l,
-} from '/web_modules/svelte/internal.js';
-function u(e) {
+} from '/dist/web_modules/svelte/internal.js';
+function i(e) {
     let r;
     return {
         c() {
             (r = n('nav')), (r.innerHTML = '<a href="/">Home</a>');
         },
         m(e, t) {
-            o(e, r, t);
+            s(e, r, t);
         },
-        p: s,
-        i: s,
-        o: s,
+        p: o,
+        i: o,
+        o: o,
         d(e) {
             e && t(r);
         },
@@ -26,6 +26,6 @@ function u(e) {
 }
 export default class extends e {
     constructor(e) {
-        super(), r(this, e, null, u, l, {});
+        super(), r(this, e, null, i, l, {});
     }
 }

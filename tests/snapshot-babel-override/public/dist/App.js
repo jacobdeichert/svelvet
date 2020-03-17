@@ -6,14 +6,14 @@ import {
     mount_component as r,
     noop as s,
     safe_not_equal as m,
-    transition_in as l,
-    transition_out as u,
-} from '/web_modules/svelte/internal.js';
-import { onMount as c } from '/web_modules/svelte/internal.js';
-import f from './components/Header.js';
-function i(e) {
+    transition_in as i,
+    transition_out as l,
+} from '/dist/web_modules/svelte/internal.js';
+import { onMount as u } from '/dist/web_modules/svelte/internal.js';
+import c from './components/Header.js';
+function d(e) {
     let o;
-    const m = new f({});
+    const m = new c({});
     return {
         c() {
             t(m.$$.fragment);
@@ -23,19 +23,19 @@ function i(e) {
         },
         p: s,
         i(e) {
-            o || (l(m.$$.fragment, e), (o = !0));
+            o || (i(m.$$.fragment, e), (o = !0));
         },
         o(e) {
-            u(m.$$.fragment, e), (o = !1);
+            l(m.$$.fragment, e), (o = !1);
         },
         d(e) {
             n(m, e);
         },
     };
 }
-function a(e) {
+function f(e) {
     return (
-        c(() => {
+        u(() => {
             console.log('mounted');
         }),
         []
@@ -43,6 +43,6 @@ function a(e) {
 }
 export default class extends e {
     constructor(e) {
-        super(), o(this, e, a, i, m, {});
+        super(), o(this, e, f, d, m, {});
     }
 }

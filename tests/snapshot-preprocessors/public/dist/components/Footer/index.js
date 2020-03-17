@@ -13,7 +13,7 @@ import {
     space as f,
     transition_in as u,
     transition_out as p,
-} from '/web_modules/svelte/internal.js';
+} from '/dist/web_modules/svelte/internal.js';
 import $ from './Links.js';
 function d(t) {
     let l, c, d, w;
