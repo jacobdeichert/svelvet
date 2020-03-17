@@ -73,14 +73,14 @@ To optimize a build for production, use `npm run build`.
 You also must have an [`index.html`][basic_example_html] file that loads your entrypoint or root `svelte` component.
 
 ~~~html
-<!-- Example: dist/index.html -->
+<!-- Example: public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
     <body>
         <div id="app"></div>
 
         <script type="module">
-            import App from './App.js';
+            import App from './dist/App.js';
 
             new App({
                 target: document.querySelector('#app'),
