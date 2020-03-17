@@ -31,7 +31,8 @@ function loadBabelConfig(): any {
                 {
                     // Append .js to all src file imports
                     optionalExtensions: true,
-                    dir: 'public/dist/web_modules',
+                    dir: 'dist/web_modules',
+                    importMap: '../../public/dist/web_modules/import-map.json',
                 },
             ],
         ],
