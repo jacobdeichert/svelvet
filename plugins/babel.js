@@ -1,62 +1,74 @@
 // FORK OF SNOWPACK'S BABEL PLUGIN
 // https://github.com/pikapkg/snowpack/blob/37ad4d5f193be1fe2e5ad3b3725520e79c97f2c6/assets/babel-plugin.js
 
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 const fs = require('fs');
 const path = require('path');
 
 function readImportMapFile(explicitPath, dir) {
-  if (explicitPath) {
-    if (path.isAbsolute(explicitPath)) {
-      return fs.readFileSync(explicitPath, {encoding: 'utf8'});
+    if (explicitPath) {
+        if (path.isAbsolute(explicitPath)) {
+            return fs.readFileSync(explicitPath, { encoding: 'utf8' });
+        }
+        const explicitImportMap = path.join(process.cwd(), dir, explicitPath);
+        return fs.readFileSync(explicitImportMap, { encoding: 'utf8' });
     }
-    const explicitImportMap = path.join(process.cwd(), dir, explicitPath);
-    return fs.readFileSync(explicitImportMap, {encoding: 'utf8'});
-  }
-  const localImportMap = path.join(process.cwd(), dir, `import-map.local.json`);
-  const defaultImportMap = path.join(process.cwd(), dir, `import-map.json`);
-  try {
-    return fs.readFileSync(localImportMap, {encoding: 'utf8'});
-  } catch (err) {
-    // do nothing
-  }
-  try {
-    return fs.readFileSync(defaultImportMap, {encoding: 'utf8'});
-  } catch (err) {
-    // do nothing
-  }
-  throw new Error(`Import map not found. Run Snowpack first to generate one.
+    const localImportMap = path.join(
+        process.cwd(),
+        dir,
+        `import-map.local.json`
+    );
+    const defaultImportMap = path.join(process.cwd(), dir, `import-map.json`);
+    try {
+        return fs.readFileSync(localImportMap, { encoding: 'utf8' });
+    } catch (err) {
+        // do nothing
+    }
+    try {
+        return fs.readFileSync(defaultImportMap, { encoding: 'utf8' });
+    } catch (err) {
+        // do nothing
+    }
+    throw new Error(`Import map not found. Run Snowpack first to generate one.
   ✘ ${localImportMap}
   ✘ ${defaultImportMap}`);
 }
 
 function getImportMap(explicitPath, dir) {
-  const fileContents = readImportMapFile(explicitPath, dir);
-  importMapJson = JSON.parse(fileContents);
-  return importMapJson;
+    const fileContents = readImportMapFile(explicitPath, dir);
+    const importMapJson = JSON.parse(fileContents);
+    return importMapJson;
 }
 
 function rewriteImport(importMap, imp, dir, shouldAddMissingExtension) {
-  const isSourceImport = imp.startsWith('/') || imp.startsWith('.') || imp.startsWith('\\');
-  const isRemoteImport = imp.startsWith('http://') || imp.startsWith('https://');
-  const mappedImport = importMap.imports[imp];
-  if (mappedImport) {
-    if (mappedImport.startsWith('http://') || mappedImport.startsWith('https://')) {
-      return mappedImport;
-    } else {
-      return path.posix.join('/', dir, mappedImport);
+    const isSourceImport =
+        imp.startsWith('/') || imp.startsWith('.') || imp.startsWith('\\');
+    const isRemoteImport =
+        imp.startsWith('http://') || imp.startsWith('https://');
+    const mappedImport = importMap.imports[imp];
+    if (mappedImport) {
+        if (
+            mappedImport.startsWith('http://') ||
+            mappedImport.startsWith('https://')
+        ) {
+            return mappedImport;
+        }
+        return path.posix.join('/', dir, mappedImport);
     }
-  }
-  if (isRemoteImport) {
+    if (isRemoteImport) {
+        return imp;
+    }
+    if (!isSourceImport && !mappedImport) {
+        console.log(
+            `warn: bare import "${imp}" not found in import map, ignoring...`
+        );
+        return imp;
+    }
+    if (isSourceImport && shouldAddMissingExtension && !path.extname(imp)) {
+        return `${imp}.js`;
+    }
     return imp;
-  }
-  if (!isSourceImport && !mappedImport) {
-    console.log(`warn: bare import "${imp}" not found in import map, ignoring...`);
-    return imp;
-  }
-  if (isSourceImport && shouldAddMissingExtension && !path.extname(imp)) {
-    return imp + '.js';
-  }
-  return imp;
 }
 
 /**
@@ -71,51 +83,64 @@ function rewriteImport(importMap, imp, dir, shouldAddMissingExtension) {
  *                        this can be a useful option for migrating an old project to Snowpack.
  */
 module.exports = function pikaWebBabelTransform(
-  {types: t, env},
-  {optionalExtensions, dir, addVersion, importMap} = {},
+    { types: t, env },
+    { optionalExtensions, dir, addVersion, importMap } = {}
 ) {
-  // Default options
-  optionalExtensions = optionalExtensions || false;
-  dir = dir || 'web_modules';
-  // Deprecation warnings
-  if (addVersion) {
-    console.warn(
-      'warn: "addVersion" option is now built into Snowpack and on by default. The Babel option is no longer needed.',
-    );
-  }
-  // Plugin code
-  return {
-    pre() {
-      this.importMapJson = getImportMap(importMap, dir);
-    },
-    visitor: {
-      CallExpression(path, {file, opts}) {
-        if (path.node.callee.type !== 'Import') {
-          return;
-        }
-        const [source] = path.get('arguments');
-        if (source.type !== 'StringLiteral') {
-          /* Should never happen */
-          return;
-        }
-        source.replaceWith(
-          t.stringLiteral(
-            rewriteImport(this.importMapJson, source.node.value, dir, optionalExtensions),
-          ),
+    // Default options
+    optionalExtensions = optionalExtensions || false;
+    dir = dir || 'web_modules';
+    // Deprecation warnings
+    if (addVersion) {
+        console.warn(
+            'warn: "addVersion" option is now built into Snowpack and on by default. The Babel option is no longer needed.'
         );
-      },
-      'ImportDeclaration|ExportNamedDeclaration|ExportAllDeclaration'(path, {file, opts}) {
-        const source = path.get('source');
-        // An export without a 'from' clause
-        if (!source.node) {
-          return;
-        }
-        source.replaceWith(
-          t.stringLiteral(
-            rewriteImport(this.importMapJson, source.node.value, dir, optionalExtensions),
-          ),
-        );
-      },
-    },
-  };
+    }
+    // Plugin code
+    return {
+        pre() {
+            this.importMapJson = getImportMap(importMap, dir);
+        },
+        visitor: {
+            CallExpression(path, { file, opts }) {
+                if (path.node.callee.type !== 'Import') {
+                    return;
+                }
+                const [source] = path.get('arguments');
+                if (source.type !== 'StringLiteral') {
+                    /* Should never happen */
+                    return;
+                }
+                source.replaceWith(
+                    t.stringLiteral(
+                        rewriteImport(
+                            this.importMapJson,
+                            source.node.value,
+                            dir,
+                            optionalExtensions
+                        )
+                    )
+                );
+            },
+            'ImportDeclaration|ExportNamedDeclaration|ExportAllDeclaration'(
+                path,
+                { file, opts }
+            ) {
+                const source = path.get('source');
+                // An export without a 'from' clause
+                if (!source.node) {
+                    return;
+                }
+                source.replaceWith(
+                    t.stringLiteral(
+                        rewriteImport(
+                            this.importMapJson,
+                            source.node.value,
+                            dir,
+                            optionalExtensions
+                        )
+                    )
+                );
+            },
+        },
+    };
 };
