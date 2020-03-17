@@ -41,7 +41,16 @@ function getImportMap(explicitPath, dir) {
     return importMapJson;
 }
 
-function rewriteImport(importMap, imp, dir, shouldAddMissingExtension) {
+function rewriteImport(
+    importMap,
+    imp,
+    buildDir,
+    webModulesDir,
+    shouldAddMissingExtension
+) {
+    // Find js/svelte imports that are absolute and need the buildDir prepended
+    const isAbsoluteSourceImport =
+        imp.startsWith('/') && !imp.startsWith(`/${buildDir}`);
     const isSourceImport =
         imp.startsWith('/') || imp.startsWith('.') || imp.startsWith('\\');
     const isRemoteImport =
@@ -54,7 +63,7 @@ function rewriteImport(importMap, imp, dir, shouldAddMissingExtension) {
         ) {
             return mappedImport;
         }
-        return path.posix.join('/', dir, mappedImport);
+        return path.posix.join('/', webModulesDir, mappedImport);
     }
     if (isRemoteImport) {
         return imp;
@@ -64,6 +73,9 @@ function rewriteImport(importMap, imp, dir, shouldAddMissingExtension) {
             `warn: bare import "${imp}" not found in import map, ignoring...`
         );
         return imp;
+    }
+    if (isAbsoluteSourceImport) {
+        imp = `/${buildDir}${imp}`;
     }
     if (isSourceImport && shouldAddMissingExtension && !path.extname(imp)) {
         return `${imp}.js`;
@@ -82,28 +94,21 @@ function rewriteImport(importMap, imp, dir, shouldAddMissingExtension) {
  *                        partial imports is missing in the browser and being phased out of Node.js, but
  *                        this can be a useful option for migrating an old project to Snowpack.
  */
-module.exports = function pikaWebBabelTransform(
-    { types: t, env },
-    { optionalExtensions, dir, addVersion, importMap } = {}
-) {
-    // SVELVET default options
-    optionalExtensions = optionalExtensions || true;
-    importMap = importMap || '../../public/dist/web_modules/import-map.json';
-    dir = dir || 'dist/web_modules';
+module.exports = function pikaWebBabelTransform({ types: t }) {
+    // SVELVET snowpack options.
+    // TODO: may need to make these overridable.
+    const optionalExtensions = true;
+    const buildDir = 'dist';
+    const importMap = `../../public/${buildDir}/web_modules/import-map.json`;
+    const webModulesDir = `${buildDir}/web_modules`;
 
-    // Deprecation warnings
-    if (addVersion) {
-        console.warn(
-            'warn: "addVersion" option is now built into Snowpack and on by default. The Babel option is no longer needed.'
-        );
-    }
     // Plugin code
     return {
         pre() {
-            this.importMapJson = getImportMap(importMap, dir);
+            this.importMapJson = getImportMap(importMap, webModulesDir);
         },
         visitor: {
-            CallExpression(path, { file, opts }) {
+            CallExpression(path) {
                 if (path.node.callee.type !== 'Import') {
                     return;
                 }
@@ -117,15 +122,15 @@ module.exports = function pikaWebBabelTransform(
                         rewriteImport(
                             this.importMapJson,
                             source.node.value,
-                            dir,
+                            buildDir,
+                            webModulesDir,
                             optionalExtensions
                         )
                     )
                 );
             },
             'ImportDeclaration|ExportNamedDeclaration|ExportAllDeclaration'(
-                path,
-                { file, opts }
+                path
             ) {
                 const source = path.get('source');
                 // An export without a 'from' clause
@@ -137,7 +142,8 @@ module.exports = function pikaWebBabelTransform(
                         rewriteImport(
                             this.importMapJson,
                             source.node.value,
-                            dir,
+                            buildDir,
+                            webModulesDir,
                             optionalExtensions
                         )
                     )

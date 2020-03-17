@@ -12,13 +12,13 @@ import {
     safe_not_equal as l,
     set_data as c,
     space as $,
-    text as u,
-    transition_in as d,
+    text as d,
+    transition_in as u,
     transition_out as p,
 } from '/dist/web_modules/svelte/internal.js';
 import { onMount as g } from '/dist/web_modules/svelte/internal.js';
 import v from './components/Header.js';
-import j from './components/Footer/index.js';
+import j from '/dist/components/Footer/index.js';
 import { getCurrentTime as x } from './utils/time.js';
 function w(t) {
     let i, l, g, x, w, C, b, I, _;
@@ -34,8 +34,8 @@ function w(t) {
                 n(k.$$.fragment),
                 (x = $()),
                 (w = m('div')),
-                (C = u('Current time is ')),
-                (b = u(t[0])),
+                (C = d('Current time is ')),
+                (b = d(t[0])),
                 (I = $()),
                 n(F.$$.fragment),
                 r(l, 'href', '/#');
@@ -57,7 +57,7 @@ function w(t) {
             (!_ || 1 & e) && c(b, t[0]);
         },
         i(t) {
-            _ || (d(k.$$.fragment, t), d(F.$$.fragment, t), (_ = !0));
+            _ || (u(k.$$.fragment, t), u(F.$$.fragment, t), (_ = !0));
         },
         o(t) {
             p(k.$$.fragment, t), p(F.$$.fragment, t), (_ = !1);
