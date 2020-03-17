@@ -25,17 +25,7 @@ function loadBabelConfig(): any {
     }
 
     return {
-        plugins: [
-            [
-                'snowpack/assets/babel-plugin.js',
-                {
-                    // Append .js to all src file imports
-                    optionalExtensions: true,
-                    dir: 'dist/web_modules',
-                    importMap: '../../public/dist/web_modules/import-map.json',
-                },
-            ],
-        ],
+        plugins: ['svelvet/plugins/babel.js'],
     };
 }
 

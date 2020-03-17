@@ -86,9 +86,11 @@ module.exports = function pikaWebBabelTransform(
     { types: t, env },
     { optionalExtensions, dir, addVersion, importMap } = {}
 ) {
-    // Default options
-    optionalExtensions = optionalExtensions || false;
-    dir = dir || 'web_modules';
+    // SVELVET default options
+    optionalExtensions = optionalExtensions || true;
+    importMap = importMap || '../../public/dist/web_modules/import-map.json';
+    dir = dir || 'dist/web_modules';
+
     // Deprecation warnings
     if (addVersion) {
         console.warn(
