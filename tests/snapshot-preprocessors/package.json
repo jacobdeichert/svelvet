@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "svelvet --preprocess my-preprocessors.js",
-    "build": "NODE_ENV=production svelvet --preprocess my-preprocessors.js"
+    "build": "svelvet --production --preprocess my-preprocessors.js"
   },
   "dependencies": {
     "svelte": "3.18.1"

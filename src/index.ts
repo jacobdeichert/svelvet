@@ -14,7 +14,7 @@ import rimraf from 'rimraf';
 import { init as initEsModuleLexer, parse } from 'es-module-lexer';
 import throttle from 'lodash.throttle';
 
-const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
+const IS_PRODUCTION_MODE = process.argv.includes('--production');
 const BABEL_CONFIG = loadBabelConfig();
 const SVELTE_PREPROCESSOR_CONFIG = loadSveltePreprocessors();
 

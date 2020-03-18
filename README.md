@@ -60,7 +60,7 @@ Add a few simple scripts as seen [here][basic_example_package]:
     "dev": "svelvet",
 
     // This builds the public/dist directory optimized for production with snowpack
-    "build": "NODE_ENV=production svelvet"
+    "build": "svelvet --production"
 },
 ~~~
 
