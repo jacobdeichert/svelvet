@@ -84,6 +84,8 @@ You also must have a [`public/index.html`][basic_example_html] file that loads y
         <div id="app"></div>
 
         <script type="module">
+            // If you have a component named src/App.svelte, it will get
+            // compiled to public/dist/App.js
             import App from './dist/App.js';
 
             new App({
