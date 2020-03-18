@@ -20,7 +20,7 @@ done
 cd $repo_root
 npm run format
 
-# Exit with an error if there's any changes in the tests/snapshot/dist directory
+# Exit with an error if there's any changes in the tests/*/public/dist directories
 test_err_msg="\n\nTEST ERROR: dist contains changed files that do not match the snapshot\n\n"
 git add -A
 git diff-index --quiet HEAD -- tests || (printf "$test_err_msg" && git status && exit 1);

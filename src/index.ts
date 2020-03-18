@@ -25,16 +25,7 @@ function loadBabelConfig(): any {
     }
 
     return {
-        plugins: [
-            [
-                'snowpack/assets/babel-plugin.js',
-                {
-                    // Append .js to all src file imports
-                    optionalExtensions: true,
-                    importMap: '../dist/web_modules/import-map.json',
-                },
-            ],
-        ],
+        plugins: ['svelvet/plugins/babel.js'],
     };
 }
 
@@ -55,7 +46,7 @@ function loadSveltePreprocessors(): PreprocessorGroup[] {
 
 async function cleanDist(): Promise<void> {
     if (process.argv.includes('--no-clean')) return;
-    await new Promise(resolve => rimraf('dist', resolve));
+    await new Promise(resolve => rimraf('public/dist', resolve));
 }
 
 async function compile(
@@ -130,18 +121,13 @@ async function compile(
     }
 }
 
-async function copyFile(srcPath: string): Promise<void> {
-    const destPath = getDestPath(srcPath);
-    // Create all ancestor directories for this file
-    await fs.mkdir(path.dirname(destPath), { recursive: true });
-    await fs.copyFile(srcPath, destPath);
-    console.info(`Copied asset ${destPath}`);
-}
-
 function getDestPath(srcPath: string): string {
     return path
         .normalize(srcPath)
-        .replace(new RegExp(`^src\\${path.sep}`), `dist${path.sep}`);
+        .replace(
+            new RegExp(`^src\\${path.sep}`),
+            `public${path.sep}dist${path.sep}`
+        );
 }
 
 // Update the import paths to correctly point to web_modules.
@@ -253,7 +239,7 @@ async function snowpack(includeFiles: string): Promise<void> {
                 '--include',
                 includeFiles,
                 '--dest',
-                'dist/web_modules',
+                'public/dist/web_modules',
                 maybeOptimize,
                 maybeStats,
             ],
@@ -279,17 +265,6 @@ async function initialBuild(): Promise<void> {
         'src/**/!(*+(spec|test)).+(js|mjs|svelte)',
         globConfig
     );
-    const otherAssetFiles = glob.sync(
-        'src/**/*.!(spec.[tj]s|test.[tj]s|[tj]s|mjs|svelte)',
-        globConfig
-    );
-
-    // Just copy all other asset types, no point in reading them.
-    await Promise.all(
-        otherAssetFiles.map(srcPath =>
-            concurrencyLimit(async () => copyFile(srcPath))
-        )
-    );
 
     // Compile all source files with svelte.
     const svelteWarnings: Array<() => void> = [];
@@ -305,7 +280,7 @@ async function initialBuild(): Promise<void> {
 
     try {
         // Need to run this (only once) before transforming the import paths, or else it will fail.
-        await snowpack('dist/**/*');
+        await snowpack('public/dist/**/*');
     } catch (err) {
         console.error('\n\nFailed to build with snowpack');
         err && console.error(err.stderr || err);
@@ -343,13 +318,14 @@ function startWatchMode(): void {
     console.info(`\nWatching for files...`);
 
     const handleFile = async (srcPath: string): Promise<void> => {
-        // Copy updated non-js/svelte files
+        // Ignore non-js/svelte files
+        // TODO: allow custom extensions to be processed by the svelte compiler
+        // https://github.com/jakedeichert/svelvet/issues/63
         if (
             !srcPath.endsWith('.svelte') &&
             !srcPath.endsWith('.js') &&
             !srcPath.endsWith('.mjs')
         ) {
-            copyFile(srcPath);
             return;
         }
 
@@ -372,7 +348,7 @@ function startWatchMode(): void {
 async function startDevServer(): Promise<void> {
     if (process.argv.includes('--no-serve')) return;
     const { url } = await servor({
-        root: './dist',
+        root: './public',
         fallback: 'index.html',
         port: 8080,
         reload: true,
