@@ -9,6 +9,6 @@
     "svelte": "^3.7.1"
   },
   "devDependencies": {
-    "svelvet": "^0.3.0"
+    "svelvet": "^0.4.0"
   }
 }
