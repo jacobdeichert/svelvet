@@ -8,6 +8,15 @@
 
 
 
+## v0.4.0 (2020-03-17)
+
+### Breaking Changes
+
+* Use /public directory for static assets instead of copying from /src [#65](https://github.com/jakedeichert/svelvet/pull/65)
+
+
+
+
 ## v0.3.6 (2020-03-01)
 
 ### Fixed
