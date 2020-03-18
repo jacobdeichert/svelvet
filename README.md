@@ -66,7 +66,7 @@ Add a few simple scripts as seen [here][basic_example_package]:
 
 And finally, add some `svelte` components to the `src` directory!
 
-> All `svelte` and `js` source files must be stored inside the `src` directory so `svelvet` can compile them into the `public/dist` directory.
+> All `svelte` and `js` files must be stored inside the `src` directory so `svelvet` can compile them into the `public/dist` directory.
 >
 > All **static assets** must be stored inside the `public` directory which is what you'll deploy.
 
