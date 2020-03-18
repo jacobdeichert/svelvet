@@ -1,6 +1,6 @@
 <script>
     import Header from './components/Header';
-    import Footer from '/components/Footer/index'; // Absolute imports will get prefixed with the dist directory
+    import Footer from './components/Footer/index';
 </script>
 
 
