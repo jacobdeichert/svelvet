@@ -39,11 +39,11 @@
     "@typescript-eslint/eslint-plugin": "^2.16.0",
     "@typescript-eslint/parser": "^2.16.0",
     "prettier": "^1.16.1",
-    "svelte": "^3.7.1",
+    "svelte": "3.18.1",
     "typescript": "^3.7.5"
   },
   "peerDependencies": {
-    "svelte": "^3.7.1"
+    "svelte": "^3.18.1"
   },
   "engines": {
     "node": ">=10.0.0"
