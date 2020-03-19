@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "svelvet",
-    "build": "NODE_ENV=production svelvet"
+    "build": "NODE_ENV=production svelvet --snowpack-config custom-snowpack.config.js"
   },
   "dependencies": {
     "svelte": "3.18.1",

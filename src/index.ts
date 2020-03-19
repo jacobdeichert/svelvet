@@ -17,6 +17,7 @@ import throttle from 'lodash.throttle';
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
 const BABEL_CONFIG = loadBabelConfig();
 const SVELTE_PREPROCESSOR_CONFIG = loadSveltePreprocessors();
+const SVELVET_SNOWPACK_CONFIG = getSnowpackConfigPath();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function loadBabelConfig(): any {
@@ -42,6 +43,24 @@ function loadSveltePreprocessors(): PreprocessorGroup[] {
     }
 
     return require(path.join(process.cwd(), preprocessConfigPath));
+}
+
+function getSnowpackConfigPath(): string {
+    const customConfig = process.argv.includes('--snowpack-config');
+    if (!customConfig) {
+        // Use our own config with support for importing 3rd party svelte components
+        return path.resolve(__dirname, '../plugins/snowpack.config.js');
+    }
+
+    // Maybe using a different config path/filename
+    const maybeConfigPath =
+        process.argv[process.argv.indexOf('--snowpack-config') + 1];
+
+    if (maybeConfigPath.includes('.js')) {
+        return path.join(process.cwd(), maybeConfigPath);
+    }
+
+    return path.join(process.cwd(), 'snowpack.config.js');
 }
 
 async function cleanDist(): Promise<void> {
@@ -240,6 +259,8 @@ async function snowpack(includeFiles: string): Promise<void> {
                 includeFiles,
                 '--dest',
                 'public/dist/web_modules',
+                '--config',
+                SVELVET_SNOWPACK_CONFIG,
                 maybeOptimize,
                 maybeStats,
             ],
