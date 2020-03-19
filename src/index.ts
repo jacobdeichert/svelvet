@@ -56,7 +56,7 @@ function getSnowpackConfigPath(): string {
     const maybeConfigPath =
         process.argv[process.argv.indexOf('--snowpack-config') + 1];
 
-    if (maybeConfigPath.includes('.js')) {
+    if (maybeConfigPath && maybeConfigPath.includes('.js')) {
         return path.join(process.cwd(), maybeConfigPath);
     }
 
