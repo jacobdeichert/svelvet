@@ -23,6 +23,7 @@
     "lodash.throttle": "^4.1.1",
     "p-limit": "^2.2.2",
     "rimraf": "^3.0.2",
+    "rollup-plugin-svelte": "^5.1.1",
     "servor": "^3.1.0",
     "snowpack": "1.6.0",
     "terser": "^4.6.3"
