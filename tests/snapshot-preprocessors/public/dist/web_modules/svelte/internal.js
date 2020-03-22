@@ -47,7 +47,7 @@ function $(t) {
     h = t;
 }
 function m(t) {
-    (function() {
+    (function () {
         if (!h)
             throw new Error('Function called outside component initialization');
         return h;
@@ -166,7 +166,7 @@ function B(n, r, c, u, f, i, a = [-1]) {
             (r.hydrate
                 ? s.fragment &&
                   s.fragment.l(
-                      (function(t) {
+                      (function (t) {
                           return Array.from(t.childNodes);
                       })(r.target)
                   )

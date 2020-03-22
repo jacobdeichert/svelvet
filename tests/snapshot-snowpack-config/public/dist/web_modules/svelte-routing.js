@@ -52,10 +52,10 @@ function A(n, o = t) {
     }
     return {
         set: a,
-        update: function(t) {
+        update: function (t) {
             a(t(n));
         },
-        subscribe: function(e, c = t) {
+        subscribe: function (e, c = t) {
             const i = [e, c];
             return (
                 s.push(i),
@@ -75,7 +75,7 @@ function D(e, s, a) {
         i = c ? [e] : e,
         u = s.length < 2;
     return {
-        subscribe: A(a, e => {
+        subscribe: A(a, (e) => {
             let a = !1;
             const l = [];
             let p = 0,
@@ -89,7 +89,7 @@ function D(e, s, a) {
                 h = i.map((t, e) =>
                     n(
                         t,
-                        t => {
+                        (t) => {
                             (l[e] = t), (p &= ~(1 << e)), a && d();
                         },
                         () => {
@@ -100,7 +100,7 @@ function D(e, s, a) {
             return (
                 (a = !0),
                 d(),
-                function() {
+                function () {
                     o(h), f();
                 }
             );
@@ -116,7 +116,7 @@ function I(t) {
         key: (t.history.state && t.history.state.key) || 'initial',
     };
 }
-const _ = (function(t, e) {
+const _ = (function (t, e) {
         const n = [];
         let o = I(t);
         return {
@@ -146,7 +146,8 @@ const _ = (function(t, e) {
                 } catch (n) {
                     t.location[s ? 'replace' : 'assign'](e);
                 }
-                (o = I(t)), n.forEach(t => t({ location: o, action: 'PUSH' }));
+                (o = I(t)),
+                    n.forEach((t) => t({ location: o, action: 'PUSH' }));
             },
         };
     })(
@@ -156,7 +157,7 @@ const _ = (function(t, e) {
                 window.document.createElement
         )
             ? window
-            : (function(t = '/') {
+            : (function (t = '/') {
                   let e = 0;
                   const n = [{ pathname: t, search: '' }],
                       o = [];
@@ -212,10 +213,10 @@ function J(t, e) {
             : M(t.path).reduce(
                   (t, e) => (
                       (t += 4),
-                      !(function(t) {
+                      !(function (t) {
                           return '' === t;
                       })(e)
-                          ? !(function(t) {
+                          ? !(function (t) {
                                 return z.test(t);
                             })(e)
                               ? H(e)
@@ -235,7 +236,7 @@ function Q(t, e) {
     const [r] = e.split('?'),
         s = M(r),
         a = '' === s[0],
-        c = (function(t) {
+        c = (function (t) {
             return t
                 .map(J)
                 .sort((t, e) =>
@@ -330,13 +331,13 @@ function X(t, e, n) {
     const i = f(N),
         u = f(U),
         l = A([]);
-    d(t, l, t => n(8, (s = t)));
+    d(t, l, (t) => n(8, (s = t)));
     const p = A(null);
     let m = !1;
     const g = i || A(c ? { pathname: c } : _.location);
-    d(t, g, t => n(7, (r = t)));
+    d(t, g, (t) => n(7, (r = t)));
     const y = u ? u.routerBase : A({ path: a, uri: a });
-    d(t, y, t => n(6, (o = t)));
+    d(t, y, (t) => n(6, (o = t)));
     const b = D([y, p], ([t, e]) => {
         if (null === e) return t;
         const { path: n } = t,
@@ -348,21 +349,21 @@ function X(t, e, n) {
         let { path: n } = t;
         if (((t._path = n), (t.path = V(e, n)), 'undefined' == typeof window)) {
             if (m) return;
-            const e = (function(t, e) {
+            const e = (function (t, e) {
                 return Q([t], e);
             })(t, r.pathname);
             e && (p.set(e), (m = !0));
-        } else l.update(e => (e.push(t), e));
+        } else l.update((e) => (e.push(t), e));
     }
     function w(t) {
-        l.update(e => {
+        l.update((e) => {
             const n = e.indexOf(t);
             return e.splice(n, 1), e;
         });
     }
     i ||
         (h(() =>
-            _.listen(t => {
+            _.listen((t) => {
                 g.set(t.location);
             })
         ),
@@ -376,7 +377,7 @@ function X(t, e, n) {
         });
     let { $$slots: x = {}, $$scope: k } = e;
     return (
-        (t.$set = t => {
+        (t.$set = (t) => {
             'basepath' in t && n(3, (a = t.basepath)),
                 'url' in t && n(4, (c = t.url)),
                 '$$scope' in t && n(15, (k = t.$$scope));
@@ -384,7 +385,9 @@ function X(t, e, n) {
         (t.$$.update = () => {
             if (64 & t.$$.dirty) {
                 const { path: t } = o;
-                l.update(e => (e.forEach(e => (e.path = V(t, e._path))), e));
+                l.update(
+                    (e) => (e.forEach((e) => (e.path = V(t, e._path))), e)
+                );
             }
             if (384 & t.$$.dirty) {
                 const t = Q(s, r.pathname);
@@ -399,8 +402,8 @@ class Y extends s {
         super(), a(this, t, X, W, e, { basepath: 3, url: 4 });
     }
 }
-const Z = t => ({ params: 2 & t, location: 16 & t }),
-    tt = t => ({ params: t[1], location: t[4] });
+const Z = (t) => ({ params: 2 & t, location: 16 & t }),
+    tt = (t) => ({ params: t[1], location: t[4] });
 function et(t) {
     let e, n, o, r;
     const s = [ot, nt],
@@ -564,9 +567,9 @@ function st(t, e, n) {
         { path: s = '' } = e,
         { component: a = null } = e;
     const { registerRoute: c, unregisterRoute: i, activeRoute: u } = f(U);
-    d(t, u, t => n(3, (o = t)));
+    d(t, u, (t) => n(3, (o = t)));
     const l = f(N);
-    d(t, l, t => n(4, (r = t)));
+    d(t, l, (t) => n(4, (r = t)));
     const p = { path: s, default: '' === s };
     let h = {},
         $ = {};
@@ -577,7 +580,7 @@ function st(t, e, n) {
             });
     let { $$slots: m = {}, $$scope: g } = e;
     return (
-        (t.$set = t => {
+        (t.$set = (t) => {
             n(11, (e = x(x({}, e), k(t)))),
                 'path' in t && n(8, (s = t.path)),
                 'component' in t && n(0, (a = t.component)),
@@ -646,15 +649,15 @@ function it(t, e, n) {
         { state: c = {} } = e,
         { getProps: i = () => ({}) } = e;
     const { base: u } = f(U);
-    d(t, u, t => n(12, (o = t)));
+    d(t, u, (t) => n(12, (o = t)));
     const l = f(N);
-    d(t, l, t => n(13, (r = t)));
+    d(t, l, (t) => n(13, (r = t)));
     const p = L();
     let h, $, m, g;
     let y,
         { $$slots: b = {}, $$scope: v } = e;
     return (
-        (t.$set = t => {
+        (t.$set = (t) => {
             'to' in t && n(6, (s = t.to)),
                 'replace' in t && n(7, (a = t.replace)),
                 'state' in t && n(8, (c = t.state)),
@@ -668,7 +671,7 @@ function it(t, e, n) {
                     (h =
                         '/' === s
                             ? o.uri
-                            : (function(t, e) {
+                            : (function (t, e) {
                                   if (F(t, '/')) return t;
                                   const [n, o] = t.split('?'),
                                       [r] = e.split('?'),
@@ -685,7 +688,7 @@ function it(t, e, n) {
                                   const c = a.concat(s),
                                       i = [];
                                   return (
-                                      c.forEach(t => {
+                                      c.forEach((t) => {
                                           '..' === t
                                               ? i.pop()
                                               : '.' !== t && i.push(t);
@@ -714,10 +717,10 @@ function it(t, e, n) {
             y,
             u,
             l,
-            function(t) {
+            function (t) {
                 if (
                     (p('click', t),
-                    (function(t) {
+                    (function (t) {
                         return (
                             !t.defaultPrevented &&
                             0 === t.button &&

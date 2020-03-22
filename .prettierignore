@@ -1,0 +1,3 @@
+*.md
+lib
+package-lock.json

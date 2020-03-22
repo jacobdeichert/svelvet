@@ -38,7 +38,7 @@ function d(t) {
     s = t;
 }
 function p(t) {
-    (function() {
+    (function () {
         if (!s)
             throw new Error('Function called outside component initialization');
         return s;
@@ -157,7 +157,7 @@ function S(n, r, c, u, f, i, a = [-1]) {
             (r.hydrate
                 ? h.fragment &&
                   h.fragment.l(
-                      (function(t) {
+                      (function (t) {
                           return Array.from(t.childNodes);
                       })(r.target)
                   )

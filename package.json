@@ -12,8 +12,8 @@
     "dev": "npm run build -- -w",
     "build": "npm run clean && tsc",
     "test": "./scripts/test.sh",
-    "format": "prettier '**/*.{js,jsx,ts,tsx,css,html,json,yml}' --write --ignore-path .gitignore",
-    "format:check": "prettier '**/*.{js,jsx,ts,tsx,css,html,json,yml}' --list-different --ignore-path .gitignore",
+    "format": "prettier . --write",
+    "format:check": "prettier . --list-different",
     "lint": "eslint . --ext ts --ignore-path .gitignore --ignore-pattern tests"
   },
   "dependencies": {
@@ -37,7 +37,7 @@
     "@types/rimraf": "^2.0.3",
     "@typescript-eslint/eslint-plugin": "^2.16.0",
     "@typescript-eslint/parser": "^2.16.0",
-    "prettier": "^1.16.1",
+    "prettier": "^2.0.1",
     "svelte": "^3.7.1",
     "typescript": "^3.7.5"
   },

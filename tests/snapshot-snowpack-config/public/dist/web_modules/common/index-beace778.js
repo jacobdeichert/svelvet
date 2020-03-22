@@ -114,11 +114,11 @@ function C() {
     return (n, e) => {
         const o = t.$$.callbacks[n];
         if (o) {
-            const r = (function(t, n) {
+            const r = (function (t, n) {
                 const e = document.createEvent('CustomEvent');
                 return e.initCustomEvent(t, !1, !1, n), e;
             })(n, e);
-            o.slice().forEach(n => {
+            o.slice().forEach((n) => {
                 n.call(t, r);
             });
         }
@@ -270,7 +270,7 @@ function Z(n, e, c, s, u, i, f = [-1]) {
             (e.hydrate
                 ? d.fragment &&
                   d.fragment.l(
-                      (function(t) {
+                      (function (t) {
                           return Array.from(t.childNodes);
                       })(e.target)
                   )

@@ -46,7 +46,7 @@ function loadSveltePreprocessors(): PreprocessorGroup[] {
 
 async function cleanDist(): Promise<void> {
     if (process.argv.includes('--no-clean')) return;
-    await new Promise(resolve => rimraf('public/dist', resolve));
+    await new Promise((resolve) => rimraf('public/dist', resolve));
 }
 
 async function compile(
@@ -85,7 +85,7 @@ async function compile(
             });
 
             logSvelteWarnings = (): void => {
-                result.warnings.forEach(warning => {
+                result.warnings.forEach((warning) => {
                     console.log('');
                     console.warn(
                         '\x1b[33m%s\x1b[0m',
@@ -205,7 +205,7 @@ async function checkForNewWebModules(
     const [esImports] = parse(transformedSource);
 
     // Search for new import paths that snowpack hasn't generated yet
-    const foundMissingWebModule = esImports.some(meta => {
+    const foundMissingWebModule = esImports.some((meta) => {
         const importPath = transformedSource.substring(meta.s, meta.e);
         const notRelative = !importPath.startsWith('.');
         const notAbsolute = !importPath.startsWith('/');
@@ -269,7 +269,7 @@ async function initialBuild(): Promise<void> {
     // Compile all source files with svelte.
     const svelteWarnings: Array<() => void> = [];
     const destFiles = await Promise.all(
-        svelteAndJsFiles.map(srcPath =>
+        svelteAndJsFiles.map((srcPath) =>
             concurrencyLimit(async () => {
                 const { destPath, logSvelteWarnings } = await compile(srcPath);
                 svelteWarnings.push(logSvelteWarnings);
@@ -290,7 +290,7 @@ async function initialBuild(): Promise<void> {
 
     // Transform all generated js files with babel.
     await Promise.all(
-        destFiles.map(destPath =>
+        destFiles.map((destPath) =>
             concurrencyLimit(async () => {
                 if (!destPath) return;
                 await transform(destPath, false);
@@ -301,7 +301,7 @@ async function initialBuild(): Promise<void> {
     // Minify js files with terser if in production.
     if (IS_PRODUCTION_MODE && !process.argv.includes('--no-minify')) {
         await Promise.all(
-            destFiles.map(destPath =>
+            destFiles.map((destPath) =>
                 concurrencyLimit(async () => {
                     if (!destPath) return;
                     await minify(destPath);
@@ -311,7 +311,7 @@ async function initialBuild(): Promise<void> {
     }
 
     // Log all svelte warnings
-    svelteWarnings.forEach(f => f());
+    svelteWarnings.forEach((f) => f());
 }
 
 function startWatchMode(): void {
