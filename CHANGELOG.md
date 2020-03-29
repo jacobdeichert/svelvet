@@ -8,6 +8,15 @@
 
 
 
+## v0.4.1 (2020-03-29)
+
+### Fixed
+
+* Fix missing web_module check for dynamic imports [#72](https://github.com/jakedeichert/svelvet/pull/72)
+
+
+
+
 ## v0.4.0 (2020-03-17)
 
 ### Breaking Changes
