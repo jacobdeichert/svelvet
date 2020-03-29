@@ -206,7 +206,10 @@ async function checkForNewWebModules(
 
     // Search for new import paths that snowpack hasn't generated yet
     const foundMissingWebModule = esImports.some((meta) => {
-        const importPath = transformedSource.substring(meta.s, meta.e);
+        // Replace quotes due to issue with dynamic imports starting with them.
+        const importPath = transformedSource
+            .substring(meta.s, meta.e)
+            .replace(/['"]/g, '');
         const notRelative = !importPath.startsWith('.');
         const notAbsolute = !importPath.startsWith('/');
         const notHttp = !importPath.startsWith('http://');
