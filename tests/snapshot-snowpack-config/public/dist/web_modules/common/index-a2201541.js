@@ -40,7 +40,8 @@ function a(t, e, o, r) {
 function l(t, n, e, o) {
     if (t[2] && o) {
         const r = t[2](o(e));
-        if ('object' == typeof n.dirty) {
+        if (void 0 === n.dirty) return r;
+        if ('object' == typeof r) {
             const t = [],
                 e = Math.max(n.dirty.length, r.length);
             for (let o = 0; o < e; o += 1) t[o] = n.dirty[o] | r[o];
@@ -91,7 +92,7 @@ function v(t, n) {
             ? t.removeAttribute(o)
             : 'style' === o
             ? (t.style.cssText = n[o])
-            : e[o] && e[o].set
+            : '__value' === o || (e[o] && e[o].set)
             ? (t[o] = n[o])
             : x(t, o, n[o]);
 }
@@ -139,24 +140,28 @@ let F = !1;
 function L(t) {
     z.push(t);
 }
-const M = new Set();
-function P() {
-    do {
-        for (; S.length; ) {
-            const t = S.shift();
-            w(t), T(t.$$);
-        }
-        for (; q.length; ) q.pop()();
-        for (let t = 0; t < z.length; t += 1) {
-            const n = z[t];
-            M.has(n) || (M.add(n), n());
-        }
-        z.length = 0;
-    } while (S.length);
-    for (; B.length; ) B.pop()();
-    (F = !1), M.clear();
+let M = !1;
+const P = new Set();
+function T() {
+    if (!M) {
+        M = !0;
+        do {
+            for (let t = 0; t < S.length; t += 1) {
+                const n = S[t];
+                w(n), G(n.$$);
+            }
+            for (S.length = 0; q.length; ) q.pop()();
+            for (let t = 0; t < z.length; t += 1) {
+                const n = z[t];
+                P.has(n) || (P.add(n), n());
+            }
+            z.length = 0;
+        } while (S.length);
+        for (; B.length; ) B.pop()();
+        (F = !1), (M = !1), P.clear();
+    }
 }
-function T(t) {
+function G(t) {
     if (null !== t.fragment) {
         t.update(), r(t.before_update);
         const n = t.dirty;
@@ -165,28 +170,28 @@ function T(t) {
             t.after_update.forEach(L);
     }
 }
-const G = new Set();
-let H;
-function I() {
-    H = { r: 0, c: [], p: H };
-}
+const H = new Set();
+let I;
 function J() {
-    H.r || r(H.c), (H = H.p);
+    I = { r: 0, c: [], p: I };
 }
-function K(t, n) {
-    t && t.i && (G.delete(t), t.i(n));
+function K() {
+    I.r || r(I.c), (I = I.p);
 }
-function Q(t, n, e, o) {
+function Q(t, n) {
+    t && t.i && (H.delete(t), t.i(n));
+}
+function R(t, n, e, o) {
     if (t && t.o) {
-        if (G.has(t)) return;
-        G.add(t),
-            H.c.push(() => {
-                G.delete(t), o && (e && t.d(1), o());
+        if (H.has(t)) return;
+        H.add(t),
+            I.c.push(() => {
+                H.delete(t), o && (e && t.d(1), o());
             }),
             t.o(n);
     }
 }
-function R(t, n) {
+function U(t, n) {
     const e = {},
         o = {},
         r = { $$scope: 1 };
@@ -203,13 +208,13 @@ function R(t, n) {
     for (const t in o) t in e || (e[t] = void 0);
     return e;
 }
-function U(t) {
+function V(t) {
     return 'object' == typeof t && null !== t ? t : {};
 }
-function V(t) {
+function W(t) {
     t && t.c();
 }
-function W(t, n, o) {
+function X(t, n, o) {
     const { fragment: s, on_mount: u, on_destroy: i, after_update: f } = t.$$;
     s && s.m(n, o),
         L(() => {
@@ -218,7 +223,7 @@ function W(t, n, o) {
         }),
         f.forEach(L);
 }
-function X(t, n) {
+function Y(t, n) {
     const e = t.$$;
     null !== e.fragment &&
         (r(e.on_destroy),
@@ -226,12 +231,12 @@ function X(t, n) {
         (e.on_destroy = e.fragment = null),
         (e.ctx = []));
 }
-function Y(t, n) {
+function Z(t, n) {
     -1 === t.$$.dirty[0] &&
-        (S.push(t), F || ((F = !0), D.then(P)), t.$$.dirty.fill(0)),
+        (S.push(t), F || ((F = !0), D.then(T)), t.$$.dirty.fill(0)),
         (t.$$.dirty[(n / 31) | 0] |= 1 << n % 31);
 }
-function Z(n, e, c, s, u, i, f = [-1]) {
+function tt(n, e, c, s, u, i, f = [-1]) {
     const a = E;
     w(n);
     const l = e.props || {},
@@ -251,38 +256,37 @@ function Z(n, e, c, s, u, i, f = [-1]) {
             dirty: f,
         });
     let p = !1;
-    (d.ctx = c
-        ? c(n, l, (t, e, ...o) => {
-              const r = o.length ? o[0] : e;
-              return (
-                  d.ctx &&
-                      u(d.ctx[t], (d.ctx[t] = r)) &&
-                      (d.bound[t] && d.bound[t](r), p && Y(n, t)),
-                  e
-              );
-          })
-        : []),
+    if (
+        ((d.ctx = c
+            ? c(n, l, (t, e, ...o) => {
+                  const r = o.length ? o[0] : e;
+                  return (
+                      d.ctx &&
+                          u(d.ctx[t], (d.ctx[t] = r)) &&
+                          (d.bound[t] && d.bound[t](r), p && Z(n, t)),
+                      e
+                  );
+              })
+            : []),
         d.update(),
         (p = !0),
         r(d.before_update),
         (d.fragment = !!s && s(d.ctx)),
-        e.target &&
-            (e.hydrate
-                ? d.fragment &&
-                  d.fragment.l(
-                      (function (t) {
-                          return Array.from(t.childNodes);
-                      })(e.target)
-                  )
-                : d.fragment && d.fragment.c(),
-            e.intro && K(n.$$.fragment),
-            W(n, e.target, e.anchor),
-            P()),
-        w(a);
+        e.target)
+    ) {
+        if (e.hydrate) {
+            const t = (function (t) {
+                return Array.from(t.childNodes);
+            })(e.target);
+            d.fragment && d.fragment.l(t), t.forEach(h);
+        } else d.fragment && d.fragment.c();
+        e.intro && Q(n.$$.fragment), X(n, e.target, e.anchor), T();
+    }
+    w(a);
 }
-class tt {
+class nt {
     $destroy() {
-        X(this, 1), (this.$destroy = t);
+        Y(this, 1), (this.$destroy = t);
     }
     $on(t, n) {
         const e = this.$$.callbacks[t] || (this.$$.callbacks[t] = []);
@@ -297,8 +301,8 @@ class tt {
     $set() {}
 }
 export {
-    U as A,
-    X as B,
+    V as A,
+    Y as B,
     m as C,
     v as D,
     _ as E,
@@ -306,12 +310,12 @@ export {
     p as G,
     y as H,
     g as I,
-    tt as S,
+    nt as S,
     u as a,
-    Z as b,
+    tt as b,
     f as c,
     l as d,
-    Q as e,
+    R as e,
     N as f,
     a as g,
     i as h,
@@ -319,19 +323,19 @@ export {
     O as j,
     b as k,
     $ as l,
-    I as m,
+    J as m,
     t as n,
     A as o,
-    J as p,
+    K as p,
     h as q,
     r,
     s,
-    K as t,
+    Q as t,
     k as u,
     n as v,
     d as w,
-    V as x,
-    W as y,
-    R as z,
+    W as x,
+    X as y,
+    U as z,
 };
-//# sourceMappingURL=index-beace778.js.map
+//# sourceMappingURL=index-a2201541.js.map

@@ -32,7 +32,7 @@ import {
     D as B,
     E as K,
     F as L,
-} from './common/index-beace778.js';
+} from './common/index-a2201541.js';
 const O = [];
 function A(n, o = t) {
     let r;
@@ -613,8 +613,12 @@ function ct(t) {
         c() {
             (e = C('a')), s && s.c(), B(e, f);
         },
-        m(r, a) {
-            g(r, e, a), s && s.m(e, null), (n = !0), (o = K(e, 'click', t[5]));
+        m(r, a, c) {
+            g(r, e, a),
+                s && s.m(e, null),
+                (n = !0),
+                c && o(),
+                (o = K(e, 'click', t[5]));
         },
         p(t, [n]) {
             s &&

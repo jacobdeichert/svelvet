@@ -62,24 +62,28 @@ let w = !1;
 function E(t) {
     _.push(t);
 }
-const v = new Set();
-function A() {
-    do {
-        for (; g.length; ) {
-            const t = g.shift();
-            $(t), k(t.$$);
-        }
-        for (; y.length; ) y.pop()();
-        for (let t = 0; t < _.length; t += 1) {
-            const n = _[t];
-            v.has(n) || (v.add(n), n());
-        }
-        _.length = 0;
-    } while (g.length);
-    for (; b.length; ) b.pop()();
-    (w = !1), v.clear();
+let v = !1;
+const A = new Set();
+function k() {
+    if (!v) {
+        v = !0;
+        do {
+            for (let t = 0; t < g.length; t += 1) {
+                const n = g[t];
+                $(n), N(n.$$);
+            }
+            for (g.length = 0; y.length; ) y.pop()();
+            for (let t = 0; t < _.length; t += 1) {
+                const n = _[t];
+                A.has(n) || (A.add(n), n());
+            }
+            _.length = 0;
+        } while (g.length);
+        for (; b.length; ) b.pop()();
+        (w = !1), (v = !1), A.clear();
+    }
 }
-function k(t) {
+function N(t) {
     if (null !== t.fragment) {
         t.update(), o(t.before_update);
         const n = t.dirty;
@@ -88,24 +92,24 @@ function k(t) {
             t.after_update.forEach(E);
     }
 }
-const N = new Set();
-function j(t, n) {
-    t && t.i && (N.delete(t), t.i(n));
+const j = new Set();
+function C(t, n) {
+    t && t.i && (j.delete(t), t.i(n));
 }
-function C(t, n, e, o) {
+function O(t, n, e, o) {
     if (t && t.o) {
-        if (N.has(t)) return;
-        N.add(t),
+        if (j.has(t)) return;
+        j.add(t),
             (void 0).c.push(() => {
-                N.delete(t), o && (e && t.d(1), o());
+                j.delete(t), o && (e && t.d(1), o());
             }),
             t.o(n);
     }
 }
-function O(t) {
+function S(t) {
     t && t.c();
 }
-function S(t, e, c) {
+function q(t, e, c) {
     const { fragment: u, on_mount: f, on_destroy: i, after_update: a } = t.$$;
     u && u.m(e, c),
         E(() => {
@@ -114,7 +118,7 @@ function S(t, e, c) {
         }),
         a.forEach(E);
 }
-function q(t, n) {
+function z(t, n) {
     const e = t.$$;
     null !== e.fragment &&
         (o(e.on_destroy),
@@ -122,19 +126,19 @@ function q(t, n) {
         (e.on_destroy = e.fragment = null),
         (e.ctx = []));
 }
-function z(t, n) {
+function B(t, n) {
     -1 === t.$$.dirty[0] &&
-        (g.push(t), w || ((w = !0), x.then(A)), t.$$.dirty.fill(0)),
+        (g.push(t), w || ((w = !0), x.then(k)), t.$$.dirty.fill(0)),
         (t.$$.dirty[(n / 31) | 0] |= 1 << n % 31);
 }
-function B(n, r, c, u, f, i, a = [-1]) {
-    const l = h;
+function F(n, r, c, u, f, a, l = [-1]) {
+    const d = h;
     $(n);
-    const d = r.props || {},
-        s = (n.$$ = {
+    const s = r.props || {},
+        p = (n.$$ = {
             fragment: null,
             ctx: null,
-            props: i,
+            props: a,
             update: t,
             not_equal: f,
             bound: e(),
@@ -142,43 +146,42 @@ function B(n, r, c, u, f, i, a = [-1]) {
             on_destroy: [],
             before_update: [],
             after_update: [],
-            context: new Map(l ? l.$$.context : []),
+            context: new Map(d ? d.$$.context : []),
             callbacks: e(),
-            dirty: a,
+            dirty: l,
         });
-    let p = !1;
-    (s.ctx = c
-        ? c(n, d, (t, e, ...o) => {
-              const r = o.length ? o[0] : e;
-              return (
-                  s.ctx &&
-                      f(s.ctx[t], (s.ctx[t] = r)) &&
-                      (s.bound[t] && s.bound[t](r), p && z(n, t)),
-                  e
-              );
-          })
-        : []),
-        s.update(),
-        (p = !0),
-        o(s.before_update),
-        (s.fragment = !!u && u(s.ctx)),
-        r.target &&
-            (r.hydrate
-                ? s.fragment &&
-                  s.fragment.l(
-                      (function (t) {
-                          return Array.from(t.childNodes);
-                      })(r.target)
-                  )
-                : s.fragment && s.fragment.c(),
-            r.intro && j(n.$$.fragment),
-            S(n, r.target, r.anchor),
-            A()),
-        $(l);
+    let m = !1;
+    if (
+        ((p.ctx = c
+            ? c(n, s, (t, e, ...o) => {
+                  const r = o.length ? o[0] : e;
+                  return (
+                      p.ctx &&
+                          f(p.ctx[t], (p.ctx[t] = r)) &&
+                          (p.bound[t] && p.bound[t](r), m && B(n, t)),
+                      e
+                  );
+              })
+            : []),
+        p.update(),
+        (m = !0),
+        o(p.before_update),
+        (p.fragment = !!u && u(p.ctx)),
+        r.target)
+    ) {
+        if (r.hydrate) {
+            const t = (function (t) {
+                return Array.from(t.childNodes);
+            })(r.target);
+            p.fragment && p.fragment.l(t), t.forEach(i);
+        } else p.fragment && p.fragment.c();
+        r.intro && C(n.$$.fragment), q(n, r.target, r.anchor), k();
+    }
+    $(d);
 }
-class F {
+class M {
     $destroy() {
-        q(this, 1), (this.$destroy = t);
+        z(this, 1), (this.$destroy = t);
     }
     $on(t, n) {
         const e = this.$$.callbacks[t] || (this.$$.callbacks[t] = []);
@@ -193,23 +196,23 @@ class F {
     $set() {}
 }
 export {
-    F as SvelteComponent,
+    M as SvelteComponent,
     u as append,
     s as attr,
-    O as create_component,
-    q as destroy_component,
+    S as create_component,
+    z as destroy_component,
     i as detach,
     a as element,
-    B as init,
+    F as init,
     f as insert,
-    S as mount_component,
+    q as mount_component,
     t as noop,
     m as onMount,
     c as safe_not_equal,
     p as set_data,
     d as space,
     l as text,
-    j as transition_in,
-    C as transition_out,
+    C as transition_in,
+    O as transition_out,
 };
 //# sourceMappingURL=internal.js.map
