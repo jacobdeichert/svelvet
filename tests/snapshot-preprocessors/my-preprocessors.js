@@ -5,6 +5,7 @@ module.exports = [
         typescript: {
             compilerOptions: {
                 target: 'es2020',
+                module: 'es2020',
                 baseUrl: './src',
             },
             transpileOnly: true,

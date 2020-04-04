@@ -146,19 +146,20 @@ Yeah, just run `svelvet` with the `--hydratable` or `--immutable` args to enable
 
 Yupp! You can configure one or more preprocessors that will run before your code gets compiled by svelte. This means you can use `typescript`, `pug`, `sass`, `postcss` or whatever else your chosen preprocessor is capable of handling.
 
-When running `svelvet`, you can now pass a `--preprocess my-preprocessors.js` option. The script that you specify just needs to return an array of preprocessors.
+When running `svelvet`, you can now pass a `--preprocess my-preprocess.js` option. The script that you specify just needs to return an array of preprocessors.
 
 Here's an example using [svelte-preprocess][svelte_preprocess]:
 
 ~~~js
-// my-preprocessors.js
+// my-preprocess.js
 const autoPreprocess = require('svelte-preprocess');
 
 module.exports = [
     autoPreprocess({
         typescript: {
             compilerOptions: {
-                target: 'es2019',
+                target: 'es2020',
+                module: 'es2020',
                 baseUrl: './src',
             },
             transpileOnly: true,
