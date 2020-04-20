@@ -350,10 +350,16 @@ function startWatchMode(): void {
 
 async function startDevServer(): Promise<void> {
     if (process.argv.includes('--no-serve')) return;
+
+    let port = 8080; // This is the default value
+    if (process.argv.includes('--port')) {
+        port = parseInt(process.argv[process.argv.indexOf('--port') + 1], 10);
+    }
+
     const { url } = await servor({
         root: './public',
         fallback: 'index.html',
-        port: 8080,
+        port,
         reload: true,
     });
     console.info(`Server running on ${url}`);
