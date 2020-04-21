@@ -15,7 +15,7 @@ function b(t) {
         c() {
             (r = l('div')),
                 (d = l('h1')),
-                (d.textContent = `${c}`),
+                (d.textContent = '' + c),
                 s(d, 'class', 'svelte-nwbabr'),
                 s(r, 'class', 'header svelte-nwbabr');
         },

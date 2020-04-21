@@ -14,20 +14,20 @@ import {
     transition_in as u,
     transition_out as p,
 } from '/dist/web_modules/svelte/internal.js';
-import $ from './Links.js';
-function d(t) {
-    let l, c, d, w;
-    const x = new $({});
+import d from './Links.js';
+function $(t) {
+    let l, c, $, w;
+    const x = new d({});
     return {
         c() {
             (l = r('footer')),
                 (c = r('p')),
-                (c.textContent = `${g}`),
-                (d = f()),
+                (c.textContent = '' + g),
+                ($ = f()),
                 n(x.$$.fragment);
         },
         m(t, n) {
-            i(t, l, n), e(l, c), e(l, d), m(x, l, null), (w = !0);
+            i(t, l, n), e(l, c), e(l, $), m(x, l, null), (w = !0);
         },
         p: a,
         i(t) {
@@ -44,6 +44,6 @@ function d(t) {
 const g = 'this is svelte and snowpack';
 export default class extends t {
     constructor(t) {
-        super(), l(this, t, null, d, c, {});
+        super(), l(this, t, null, $, c, {});
     }
 }

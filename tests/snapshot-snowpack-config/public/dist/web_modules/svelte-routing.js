@@ -289,10 +289,10 @@ function Q(t, e) {
     return n || o || null;
 }
 function T(t, e) {
-    return t + (e ? `?${e}` : '');
+    return t + (e ? '?' + e : '');
 }
 function V(t, e) {
-    return `${G('/' === e ? t : `${G(t)}/${G(e)}`)}/`;
+    return G('/' === e ? t : `${G(t)}/${G(e)}`) + '/';
 }
 function W(t) {
     let e;
