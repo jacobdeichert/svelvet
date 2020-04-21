@@ -11,9 +11,9 @@ import {
     mount_component as f,
     safe_not_equal as l,
     set_data as c,
-    space as $,
-    text as d,
-    transition_in as u,
+    space as d,
+    text as u,
+    transition_in as $,
     transition_out as p,
 } from '/dist/web_modules/svelte/internal.js';
 import { onMount as g } from '/dist/web_modules/svelte/internal.js';
@@ -29,14 +29,14 @@ function w(t) {
             (i = m('div')),
                 (i.textContent = 'Posts'),
                 (l = m('a')),
-                (l.textContent = `${h}`),
-                (g = $()),
+                (l.textContent = '' + h),
+                (g = d()),
                 n(k.$$.fragment),
-                (x = $()),
+                (x = d()),
                 (w = m('div')),
-                (C = d('Current time is ')),
-                (b = d(t[0])),
-                (I = $()),
+                (C = u('Current time is ')),
+                (b = u(t[0])),
+                (I = d()),
                 n(F.$$.fragment),
                 r(l, 'href', '/#');
         },
@@ -57,7 +57,7 @@ function w(t) {
             (!_ || 1 & e) && c(b, t[0]);
         },
         i(t) {
-            _ || (u(k.$$.fragment, t), u(F.$$.fragment, t), (_ = !0));
+            _ || ($(k.$$.fragment, t), $(F.$$.fragment, t), (_ = !0));
         },
         o(t) {
             p(k.$$.fragment, t), p(F.$$.fragment, t), (_ = !1);
