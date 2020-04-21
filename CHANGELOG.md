@@ -8,6 +8,15 @@
 
 
 
+## v0.4.2 (2020-04-20)
+
+### Fixed
+
+* Allow port to be configured with `--port <number>` [#82](https://github.com/jakedeichert/svelvet/pull/82)
+
+
+
+
 ## v0.4.1 (2020-03-29)
 
 ### Fixed
