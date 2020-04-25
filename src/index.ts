@@ -1,33 +1,22 @@
 /* eslint-disable no-console */
-import { spawn } from 'child_process';
 import { promises as fs, existsSync } from 'fs';
 import * as path from 'path';
 import * as svelte from 'svelte/compiler';
 import { PreprocessorGroup } from 'svelte/types/compiler/preprocess';
 import * as chokidar from 'chokidar';
-import * as babel from '@babel/core';
 import * as glob from 'glob';
-import * as terser from 'terser';
 import pLimit from 'p-limit';
 import servor from 'servor';
 import rimraf from 'rimraf';
+import * as rollup from 'rollup';
 import { init as initEsModuleLexer, parse } from 'es-module-lexer';
 import throttle from 'lodash.throttle';
+import resolveRollupPlugin from '@rollup/plugin-node-resolve';
+// import commonjs from '@rollup/plugin-commonjs';
+import svelteRollupPlugin from 'rollup-plugin-svelte';
 
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
-const BABEL_CONFIG = loadBabelConfig();
 const SVELTE_PREPROCESSOR_CONFIG = loadSveltePreprocessors();
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function loadBabelConfig(): any {
-    if (existsSync('./babel.config.js')) {
-        return require(path.join(process.cwd(), 'babel.config.js'));
-    }
-
-    return {
-        plugins: ['svelvet/plugins/babel.js'],
-    };
-}
 
 function loadSveltePreprocessors(): PreprocessorGroup[] {
     if (!process.argv.includes('--preprocess')) return [];
@@ -131,136 +120,115 @@ function getDestPath(srcPath: string): string {
 }
 
 // Update the import paths to correctly point to web_modules.
-async function transform(
-    destPath: string,
-    checkModules: boolean
-): Promise<void> {
+async function transform(destPath: string): Promise<void> {
     try {
-        const source = await fs.readFile(destPath, 'utf8');
-
-        let transformed = (await babel.transformAsync(source, {
-            ...BABEL_CONFIG,
-            filename: destPath,
-        })) as babel.BabelFileResult;
-
-        if (checkModules) {
-            const foundMissingWebModule = await checkForNewWebModules(
-                transformed.code || ''
-            );
-
-            if (foundMissingWebModule) {
-                try {
-                    // Only check this specific file for new imports
-                    await snowpack(destPath);
-                } catch (err) {
-                    console.error('\n\nFailed to build with snowpack');
-                    err && console.error(err.stderr || err);
-                    // Don't continue building...
-                    return;
-                }
-
-                // Transform again so the paths are updated with the new web_modules...
-                transformed = (await babel.transformAsync(
-                    source,
-                    BABEL_CONFIG
-                )) as babel.BabelFileResult;
-            }
-        }
-
-        await fs.writeFile(destPath, transformed.code);
-        console.info(`Babel transformed ${destPath}`);
+        let source = await fs.readFile(destPath, 'utf8');
+        source = await fixImports(source);
+        await fs.writeFile(destPath, source);
+        console.info(`Transformed ${destPath}`);
     } catch (err) {
         console.log('');
-        console.error(`Failed to transform with babel: ${destPath}`);
+        console.error(`Failed to transform: ${destPath}`);
         console.error(err);
         console.log('');
     }
 }
 
-// Minify file with terser.
-async function minify(destPath: string): Promise<void> {
-    try {
-        const source = await fs.readFile(destPath, 'utf8');
-
-        const result = terser.minify(source, {
-            module: true,
-        });
-
-        await fs.writeFile(destPath, result.code);
-        console.info(`Terser minified ${destPath}`);
-    } catch (err) {
-        console.log('');
-        console.error(`Failed to minify with terser: ${destPath}`);
-        console.error(err);
-        console.log('');
-    }
-}
-
-// Check if we should run snowpack again by looking for new import paths
-// that have not been generated into web_modules yet.
-async function checkForNewWebModules(
-    transformedSource: string
-): Promise<boolean> {
+async function fixImports(source: string): Promise<string> {
     await initEsModuleLexer;
-    const [esImports] = parse(transformedSource);
+    const [esImports] = parse(source);
+    let transformedSource = source;
 
-    // Search for new import paths that snowpack hasn't generated yet
-    const foundMissingWebModule = esImports.some((meta) => {
+    esImports.forEach((meta) => {
         // Replace quotes due to issue with dynamic imports starting with them.
-        const importPath = transformedSource
+        const importPath = source
             .substring(meta.s, meta.e)
             .replace(/['"]/g, '');
         const notRelative = !importPath.startsWith('.');
         const notAbsolute = !importPath.startsWith('/');
         const notHttp = !importPath.startsWith('http://');
         const notHttps = !importPath.startsWith('https://');
+
         // Must be a node_module that snowpack didn't see before
         return notRelative && notAbsolute && notHttp && notHttps;
     });
 
-    return foundMissingWebModule;
+    return transformedSource;
 }
 
-// Only needs to run once during the initial compile cycle. However, if a new import is found
-// in dev mode, snowpack will be ran again.
-async function snowpack(includeFiles: string): Promise<void> {
-    const maybeOptimize = IS_PRODUCTION_MODE ? '--optimize' : '';
-    const maybeStats = IS_PRODUCTION_MODE ? '--stat' : '';
+async function buildDepsWithRollup(): Promise<void> {
+    const resolveRootImports = ({ root, extensions }: any): any => {
+        const cache: { [key: string]: string } = {};
+        return {
+            generateBundle(_options: any, bundle: any): void {
+                // Only generate node_modules with rollup.
+                Object.keys(bundle).forEach((key) => {
+                    if (!key.startsWith('node_modules/')) {
+                        delete bundle[key];
+                    }
+                });
+            },
 
-    console.info(`\n\nBuilding web_modules with snowpack...`);
+            resolveId(importee: string) {
+                // Already checked
+                if (cache[importee]) return cache[importee];
 
-    const snowpackLocation = path.resolve(
-        require.resolve('snowpack'),
-        '../index.bin.js'
-    );
+                if (importee.startsWith('/')) {
+                    // TODO: handle case where extension is already specified?
+                    for (const ext of extensions) {
+                        const rootPath = `${root}${importee}${ext}`;
+                        const fullPath = path.resolve(rootPath);
 
-    await new Promise((resolve, reject) => {
-        const proc = spawn(
-            'node',
-            [
-                snowpackLocation,
-                '--include',
-                includeFiles,
-                '--dest',
-                'public/dist/web_modules',
-                maybeOptimize,
-                maybeStats,
-            ],
-            {
-                // Inherit so snowpack's log coloring is passed through
-                stdio: 'inherit',
-            }
-        );
-        proc.on('exit', (code: number) => {
-            if (code > 0) return reject();
-            resolve();
-        });
+                        // Otherwise check if it exists
+                        if (existsSync(fullPath)) {
+                            cache[importee] = fullPath;
+                            return fullPath;
+                        }
+                    }
+                }
+                return null;
+            },
+        };
+    };
+
+    const extensions = ['.js', '.svelte'];
+
+    const bundle = await rollup.rollup({
+        input: 'src/App.svelte',
+        preserveModules: true,
+        preserveEntrySignatures: 'allow-extension',
+        plugins: [
+            resolveRootImports({ root: 'src', extensions }),
+            svelteRollupPlugin({
+                // enable run-time checks when not in production
+                dev: true,
+
+                // You can restrict which files are compiled
+                // using `include` and `exclude`
+                include: 'src/**/*.svelte',
+            }),
+            resolveRollupPlugin({ extensions }),
+            // commonjs(), // Converts third-party modules to ESM
+        ],
     });
-    console.log('\n'); // Just add some spacing...
+
+    await bundle.write({
+        dir: 'public/dist',
+        format: 'es',
+        // sourcemap: true
+    });
 }
 
 async function initialBuild(): Promise<void> {
     if (IS_PRODUCTION_MODE) console.info(`Building in production mode...`);
+    try {
+        buildDepsWithRollup();
+    } catch (err) {
+        console.error('\n\nFailed to build dependencies with rollup');
+        err && console.error(err.stderr || err);
+        // Don't continue building...
+        process.exit(1);
+    }
 
     const concurrencyLimit = pLimit(8);
     const globConfig = { nodir: true };
@@ -281,37 +249,15 @@ async function initialBuild(): Promise<void> {
         )
     );
 
-    try {
-        // Need to run this (only once) before transforming the import paths, or else it will fail.
-        await snowpack('public/dist/**/*');
-    } catch (err) {
-        console.error('\n\nFailed to build with snowpack');
-        err && console.error(err.stderr || err);
-        // Don't continue building...
-        process.exit(1);
-    }
-
     // Transform all generated js files with babel.
     await Promise.all(
         destFiles.map((destPath) =>
             concurrencyLimit(async () => {
                 if (!destPath) return;
-                await transform(destPath, false);
+                await transform(destPath);
             })
         )
     );
-
-    // Minify js files with terser if in production.
-    if (IS_PRODUCTION_MODE && !process.argv.includes('--no-minify')) {
-        await Promise.all(
-            destFiles.map((destPath) =>
-                concurrencyLimit(async () => {
-                    if (!destPath) return;
-                    await minify(destPath);
-                })
-            )
-        );
-    }
 
     // Log all svelte warnings
     svelteWarnings.forEach((f) => f());
@@ -334,7 +280,7 @@ function startWatchMode(): void {
 
         const { destPath, logSvelteWarnings } = await compile(srcPath);
         if (!destPath) return;
-        await transform(destPath, true);
+        await transform(destPath);
         logSvelteWarnings();
     };
 
