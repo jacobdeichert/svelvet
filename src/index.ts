@@ -13,7 +13,6 @@ import { init as initEsModuleLexer, parse } from 'es-module-lexer';
 import throttle from 'lodash.throttle';
 import resolveRollupPlugin from '@rollup/plugin-node-resolve';
 // import commonjs from '@rollup/plugin-commonjs';
-// @ts-ignore: typings missing from package - https://github.com/sveltejs/rollup-plugin-svelte/blob/master/index.d.ts
 import svelteRollupPlugin from 'rollup-plugin-svelte';
 
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
