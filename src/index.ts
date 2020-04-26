@@ -14,6 +14,7 @@ import throttle from 'lodash.throttle';
 import resolveRollupPlugin from '@rollup/plugin-node-resolve';
 // import commonjs from '@rollup/plugin-commonjs';
 import svelteRollupPlugin from 'rollup-plugin-svelte';
+import { terser as terserRollupPlugin } from 'rollup-plugin-terser';
 
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
 const SVELTE_PREPROCESSOR_CONFIG = loadSveltePreprocessors();
@@ -135,6 +136,8 @@ async function transform(destPath: string): Promise<void> {
 }
 
 async function fixImports(destPath: string, source: string): Promise<string> {
+    if (IS_PRODUCTION_MODE) return source;
+
     await initEsModuleLexer;
     const [esImports] = parse(source);
     const destPathDir = path.dirname(destPath);
@@ -215,7 +218,9 @@ async function buildDepsWithRollup(): Promise<void> {
                 _options: rollup.OutputOptions,
                 bundle: rollup.OutputBundle
             ): void {
-                // Only generate node_modules with rollup.
+                if (IS_PRODUCTION_MODE) return;
+
+                // In dev mode, only generate node_modules with rollup.
                 Object.keys(bundle).forEach((key) => {
                     if (!key.startsWith('node_modules/')) {
                         delete bundle[key];
@@ -249,18 +254,21 @@ async function buildDepsWithRollup(): Promise<void> {
 
     const bundle = await rollup.rollup({
         input: 'src/App.svelte',
-        preserveModules: true,
+        preserveModules: !IS_PRODUCTION_MODE,
         preserveEntrySignatures: 'allow-extension',
         plugins: [
             resolveRootImports('src', extensions),
             svelteRollupPlugin({
-                dev: true,
+                dev: !IS_PRODUCTION_MODE,
                 include: 'src/**/*.svelte',
                 hydratable: process.argv.includes('--hydratable'),
                 immutable: process.argv.includes('--immutable'),
+                // @ts-ignore
+                preprocess: SVELTE_PREPROCESSOR_CONFIG,
             }),
             resolveRollupPlugin({ extensions }),
             // commonjs(), // Converts third-party modules to ESM
+            IS_PRODUCTION_MODE && terserRollupPlugin(),
         ],
     });
 
@@ -283,6 +291,8 @@ async function initialBuild(): Promise<void> {
         // Don't continue building...
         process.exit(1);
     }
+
+    if (IS_PRODUCTION_MODE) return;
 
     const concurrencyLimit = pLimit(8);
     const globConfig = { nodir: true };
