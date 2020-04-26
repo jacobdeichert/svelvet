@@ -253,7 +253,12 @@ async function buildDepsWithRollup(): Promise<void> {
         preserveEntrySignatures: 'allow-extension',
         plugins: [
             resolveRootImports('src', extensions),
-            svelteRollupPlugin({ include: 'src/**/*.svelte' }),
+            svelteRollupPlugin({
+                dev: true,
+                include: 'src/**/*.svelte',
+                hydratable: process.argv.includes('--hydratable'),
+                immutable: process.argv.includes('--immutable'),
+            }),
             resolveRollupPlugin({ extensions }),
             // commonjs(), // Converts third-party modules to ESM
         ],

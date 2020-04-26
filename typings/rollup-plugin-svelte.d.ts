@@ -24,6 +24,11 @@ declare module 'rollup-plugin-svelte' {
     }
 
     interface Options {
+        // PATCH: added missing options...
+        dev?: boolean;
+        hydratable?: boolean;
+        immutable?: boolean;
+
         /**
          * By default, all .svelte and .html files are compiled
          * @default ['.html', '.svelte']
