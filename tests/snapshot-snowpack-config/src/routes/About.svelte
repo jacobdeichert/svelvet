@@ -1,3 +1,0 @@
-<div>
-    ABOUT PAGE
-</div>
