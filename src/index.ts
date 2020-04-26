@@ -13,6 +13,7 @@ import { init as initEsModuleLexer, parse } from 'es-module-lexer';
 import throttle from 'lodash.throttle';
 import resolveRollupPlugin from '@rollup/plugin-node-resolve';
 // import commonjs from '@rollup/plugin-commonjs';
+// @ts-ignore: typings missing from package - https://github.com/sveltejs/rollup-plugin-svelte/blob/master/index.d.ts
 import svelteRollupPlugin from 'rollup-plugin-svelte';
 
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
@@ -123,7 +124,7 @@ function getDestPath(srcPath: string): string {
 async function transform(destPath: string): Promise<void> {
     try {
         let source = await fs.readFile(destPath, 'utf8');
-        source = await fixImports(source);
+        source = await fixImports(destPath, source);
         await fs.writeFile(destPath, source);
         console.info(`Transformed ${destPath}`);
     } catch (err) {
@@ -134,23 +135,69 @@ async function transform(destPath: string): Promise<void> {
     }
 }
 
-async function fixImports(source: string): Promise<string> {
+async function fixImports(destPath: string, source: string): Promise<string> {
     await initEsModuleLexer;
     const [esImports] = parse(source);
+    const destPathDir = path.dirname(destPath);
     let transformedSource = source;
+    let offset = 0;
+
+    const getRelativePath = (importPath: string): string =>
+        path.relative(destPathDir, `./public/dist/${importPath}`);
 
     esImports.forEach((meta) => {
+        const importPathOriginal = source.substring(meta.s, meta.e);
         // Replace quotes due to issue with dynamic imports starting with them.
-        const importPath = source
-            .substring(meta.s, meta.e)
-            .replace(/['"]/g, '');
-        const notRelative = !importPath.startsWith('.');
-        const notAbsolute = !importPath.startsWith('/');
-        const notHttp = !importPath.startsWith('http://');
-        const notHttps = !importPath.startsWith('https://');
+        const importPath = importPathOriginal.replace(/['"]/g, '');
+        if (
+            importPath.startsWith('http://') ||
+            importPath.startsWith('https://')
+        ) {
+            return;
+        }
 
-        // Must be a node_module that snowpack didn't see before
-        return notRelative && notAbsolute && notHttp && notHttps;
+        const isRelative = importPath.startsWith('.');
+        const isAbsolute = importPath.startsWith('/');
+        const isNodeModule = !isRelative && !isAbsolute;
+
+        let newImportPath = importPath;
+        // Use relative path to ensure deployed code doesn't care what subdirectory it lives in.
+        if (isNodeModule) {
+            const nodeModulesImportPath = `node_modules/${importPath}`;
+            newImportPath = getRelativePath(nodeModulesImportPath);
+            const distPath = `./public/dist/${nodeModulesImportPath}`;
+
+            // Assume the path is correct, but test it exists...
+            if (!existsSync(`${distPath}.js`)) {
+                // Maybe it's implicitly an index.js...
+                if (existsSync(`${distPath}/index.js`)) {
+                    newImportPath += '/index';
+                } else {
+                    // Possibly the first time we've encountered this module.
+                    // TODO: Need to rerun rollup
+                    throw new Error(`cannot find node_module: ${distPath}`);
+                }
+            }
+        } else if (isAbsolute) {
+            newImportPath = getRelativePath(importPath);
+        }
+
+        // Fix case where import path is to a file in the same directory
+        if (!newImportPath.startsWith('.') && !newImportPath.startsWith('/')) {
+            newImportPath = `./${newImportPath}`;
+        }
+
+        // Add the extension if it's not already defined
+        if (!newImportPath.endsWith('.mjs') && !newImportPath.endsWith('.js')) {
+            newImportPath += '.js';
+        }
+
+        const beforeImport = transformedSource.slice(0, meta.s + offset);
+        const afterImport = transformedSource.slice(meta.e + offset);
+        transformedSource = `${beforeImport}${newImportPath}${afterImport}`;
+
+        // Track the offset since we are mutating the source and losing the meta positions.
+        offset += newImportPath.length - importPathOriginal.length;
     });
 
     return transformedSource;
@@ -200,12 +247,10 @@ async function buildDepsWithRollup(): Promise<void> {
         plugins: [
             resolveRootImports({ root: 'src', extensions }),
             svelteRollupPlugin({
-                // enable run-time checks when not in production
                 dev: true,
-
-                // You can restrict which files are compiled
-                // using `include` and `exclude`
                 include: 'src/**/*.svelte',
+                hydratable: process.argv.includes('--hydratable'),
+                immutable: process.argv.includes('--immutable'),
             }),
             resolveRollupPlugin({ extensions }),
             // commonjs(), // Converts third-party modules to ESM
@@ -215,6 +260,8 @@ async function buildDepsWithRollup(): Promise<void> {
     await bundle.write({
         dir: 'public/dist',
         format: 'es',
+        // Prevent rollup from naming node_modules `.mjs.js`
+        entryFileNames: '[name].js',
         // sourcemap: true
     });
 }
@@ -222,7 +269,7 @@ async function buildDepsWithRollup(): Promise<void> {
 async function initialBuild(): Promise<void> {
     if (IS_PRODUCTION_MODE) console.info(`Building in production mode...`);
     try {
-        buildDepsWithRollup();
+        await buildDepsWithRollup();
     } catch (err) {
         console.error('\n\nFailed to build dependencies with rollup');
         err && console.error(err.stderr || err);
