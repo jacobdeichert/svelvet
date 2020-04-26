@@ -1,7 +1,4 @@
-<p align="center">
-  <img height="180" width="210" src="https://user-images.githubusercontent.com/1631044/72686362-de3f2200-3ac1-11ea-9b22-695128fe6f8c.png" alt="svelvet logo">
-</p>
-
+# svelvet
 
 
 [![build status](https://github.com/jakedeichert/svelvet/workflows/CI/badge.svg?branch=master)][github_ci]
