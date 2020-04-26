@@ -10,6 +10,6 @@
     "svelte": "3.20.1"
   },
   "devDependencies": {
-    "svelvet": "file:../.."
+    "@jakedeichert/svelvet": "file:../.."
   }
 }
