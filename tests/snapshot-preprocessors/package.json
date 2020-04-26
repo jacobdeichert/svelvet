@@ -1,6 +1,7 @@
 {
   "name": "svelvet-test",
   "private": true,
+  "main": "src/App.svelte",
   "scripts": {
     "dev": "svelvet --preprocess my-preprocessors.js",
     "build": "NODE_ENV=production svelvet --preprocess my-preprocessors.js"

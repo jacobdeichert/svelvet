@@ -16,6 +16,8 @@ import resolveRollupPlugin from '@rollup/plugin-node-resolve';
 import svelteRollupPlugin from 'rollup-plugin-svelte';
 import { terser as terserRollupPlugin } from 'rollup-plugin-terser';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const PACKAGE_JSON = require(path.join(process.cwd(), 'package.json'));
 const IS_PRODUCTION_MODE = process.env.NODE_ENV === 'production';
 const SVELTE_PREPROCESSOR_CONFIG = loadSveltePreprocessors();
 
@@ -269,7 +271,7 @@ async function buildDepsWithRollup(): Promise<void> {
     if (IS_PRODUCTION_MODE) plugins.push(terserRollupPlugin());
 
     const bundle = await rollup.rollup({
-        input: 'src/App.svelte',
+        input: PACKAGE_JSON.main || 'src/Main.svelte',
         preserveModules: !IS_PRODUCTION_MODE,
         preserveEntrySignatures: 'allow-extension',
         plugins,
