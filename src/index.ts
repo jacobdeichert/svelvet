@@ -203,10 +203,18 @@ async function fixImports(destPath: string, source: string): Promise<string> {
 }
 
 async function buildDepsWithRollup(): Promise<void> {
-    const resolveRootImports = ({ root, extensions }: any): any => {
+    const resolveRootImports = (
+        root: string,
+        extensions: string[]
+    ): rollup.Plugin => {
         const cache: { [key: string]: string } = {};
         return {
-            generateBundle(_options: any, bundle: any): void {
+            name: 'resolveRootImports',
+
+            generateBundle(
+                _options: rollup.OutputOptions,
+                bundle: rollup.OutputBundle
+            ): void {
                 // Only generate node_modules with rollup.
                 Object.keys(bundle).forEach((key) => {
                     if (!key.startsWith('node_modules/')) {
@@ -215,7 +223,7 @@ async function buildDepsWithRollup(): Promise<void> {
                 });
             },
 
-            resolveId(importee: string) {
+            resolveId(importee: string): string | null {
                 // Already checked
                 if (cache[importee]) return cache[importee];
 
@@ -244,13 +252,8 @@ async function buildDepsWithRollup(): Promise<void> {
         preserveModules: true,
         preserveEntrySignatures: 'allow-extension',
         plugins: [
-            resolveRootImports({ root: 'src', extensions }),
-            svelteRollupPlugin({
-                dev: true,
-                include: 'src/**/*.svelte',
-                hydratable: process.argv.includes('--hydratable'),
-                immutable: process.argv.includes('--immutable'),
-            }),
+            resolveRootImports('src', extensions),
+            svelteRollupPlugin({ include: 'src/**/*.svelte' }),
             resolveRollupPlugin({ extensions }),
             // commonjs(), // Converts third-party modules to ESM
         ],
