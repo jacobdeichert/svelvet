@@ -252,24 +252,27 @@ async function buildDepsWithRollup(): Promise<void> {
 
     const extensions = ['.js', '.svelte'];
 
+    const plugins = [
+        resolveRootImports('src', extensions),
+        svelteRollupPlugin({
+            dev: !IS_PRODUCTION_MODE,
+            include: 'src/**/*.svelte',
+            hydratable: process.argv.includes('--hydratable'),
+            immutable: process.argv.includes('--immutable'),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            preprocess: SVELTE_PREPROCESSOR_CONFIG as any,
+        }),
+        resolveRollupPlugin({ extensions }),
+        // commonjs(), // Converts third-party modules to ESM
+    ];
+
+    if (IS_PRODUCTION_MODE) plugins.push(terserRollupPlugin());
+
     const bundle = await rollup.rollup({
         input: 'src/App.svelte',
         preserveModules: !IS_PRODUCTION_MODE,
         preserveEntrySignatures: 'allow-extension',
-        plugins: [
-            resolveRootImports('src', extensions),
-            svelteRollupPlugin({
-                dev: !IS_PRODUCTION_MODE,
-                include: 'src/**/*.svelte',
-                hydratable: process.argv.includes('--hydratable'),
-                immutable: process.argv.includes('--immutable'),
-                // @ts-ignore
-                preprocess: SVELTE_PREPROCESSOR_CONFIG,
-            }),
-            resolveRollupPlugin({ extensions }),
-            // commonjs(), // Converts third-party modules to ESM
-            IS_PRODUCTION_MODE && terserRollupPlugin(),
-        ],
+        plugins,
     });
 
     await bundle.write({
@@ -363,7 +366,7 @@ async function startDevServer(): Promise<void> {
 
     let port = 8080; // This is the default value
     if (process.argv.includes('--port')) {
-        port = parseInt(process.argv[process.argv.indexOf('--port') + 1], 10);
+        port = parseInt(process.argv[process.argv.indexOf('--port') + 1]);
     }
 
     const { url } = await servor({
