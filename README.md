@@ -8,6 +8,15 @@
 An experimental [svelte][svelte] compiler & watcher that works with [snowpack][snowpack].
 
 
+## Alternatives
+
+Svelvet was built on top of snowpack v1. [At the time](https://twitter.com/jakedeichert/status/1218579453594435585), there was no easy way to get svelte and snowpack playing nicely together. That has changed however as snowpack v2 now has built-in support for svelte!
+
+Due to this and [production performance issues with esm](https://github.com/jakedeichert/svelvet/issues/83), I don't plan on continuing to support svelvet.
+
+If you're looking for a fast bundler for dev and production, check out [snowpack v2](https://www.snowpack.dev/#svelte). Another alternative is to migrate to rollup by following [this guide](https://github.com/jakedeichert/svelvet/issues/84).
+
+
 
 ## Goals
 
