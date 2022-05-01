@@ -323,7 +323,6 @@ function startWatchMode(): void {
     const handleFile = async (srcPath: string): Promise<void> => {
         // Ignore non-js/svelte files
         // TODO: allow custom extensions to be processed by the svelte compiler
-        // https://github.com/jakedeichert/svelvet/issues/63
         if (
             !srcPath.endsWith('.svelte') &&
             !srcPath.endsWith('.js') &&
